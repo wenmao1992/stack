@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Stack</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:#f2f2f7;color:#1c1c1e;font-size:15px;line-height:1.4;min-height:100vh}
+@media(prefers-color-scheme:dark){body{background:#000;color:#fff}.surface{background:#1c1c1e!important;border-color:#38383a!important}.surface2{background:#2c2c2e!important}.nav-bar{background:rgba(28,28,30,.95)!important;border-color:#38383a!important}.tab-btn{color:#636366!important}.tab-btn.active{color:#007aff!important;border-color:#007aff!important}.seg-btn{color:#636366!important;background:transparent!important}.seg-btn.active{background:#007aff!important;color:#fff!important;border-color:#007aff!important}.feel-btn.active{background:#ff9f0a!important;color:#fff!important;border-color:#ff9f0a!important}.gen-btn{background:#007aff!important}.row-label{color:#8e8e93!important}.pill-note{color:#8e8e93!important}.section-label{color:#8e8e93!important}.skip-row{background:rgba(255,69,58,.08)!important;border-color:rgba(255,69,58,.2)!important}.skip-name{color:#ff453a!important}.skip-why{color:#8e8e93!important}.rule-card{border-left-color:#007aff!important}.over{color:#ff453a!important}.warn-c{color:#ff9f0a!important}.ok{color:#32d74b!important}.nut-th{color:#8e8e93!important}.prod-num{color:#8e8e93!important}.prod-detail{color:#8e8e93!important}.dose-amt{color:#007aff!important}}
+
+.surface{background:#fff;border:0.5px solid #e5e5ea;border-radius:12px}
+.surface2{background:#f2f2f7;border-radius:8px}
+
+/* header */
+.header{background:rgba(242,242,247,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:12px 16px 10px;position:sticky;top:0;z-index:100;border-bottom:0.5px solid #e5e5ea;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.header-sub{font-size:12px;color:#8e8e93;margin-top:1px}
+
+/* tabs */
+.nav-bar{background:rgba(242,242,247,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:0.5px solid #e5e5ea;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav-bar::-webkit-scrollbar{display:none}
+.tab-btn{flex:none;padding:8px 16px;font-size:13px;font-weight:500;color:#8e8e93;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-family:inherit;transition:color .15s,border-color .15s}
+.tab-btn.active{color:#007aff;border-bottom-color:#007aff}
+
+/* main */
+.main{padding:16px}
+.page{display:none}
+.page.active{display:block}
+
+/* segment controls */
+.seg-group{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.seg-btn{padding:7px 14px;border-radius:20px;border:0.5px solid #c7c7cc;background:transparent;color:#3a3a3c;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.seg-btn.active{background:#007aff;color:#fff;border-color:#007aff}
+.feel-btn.active{background:#ff9f0a;color:#fff;border-color:#ff9f0a}
+
+/* dose */
+.dose-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.row-label{font-size:12px;color:#8e8e93;font-weight:500;text-transform:uppercase;letter-spacing:.5px;min-width:56px}
+.dose-btn{padding:5px 14px;border-radius:16px;border:0.5px solid #c7c7cc;background:transparent;color:#3a3a3c;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.dose-btn.active{background:#ff3b30;color:#fff;border-color:#ff3b30}
+@media(prefers-color-scheme:dark){.dose-btn{color:#ebebf5!important;border-color:#38383a!important}.dose-btn.active{background:#ff453a!important;border-color:#ff453a!important}}
+
+/* section label */
+.section-label{font-size:12px;font-weight:600;color:#8e8e93;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+/* cards */
+.card{background:#fff;border:0.5px solid #e5e5ea;border-radius:12px;padding:14px 16px;margin-bottom:12px}
+@media(prefers-color-scheme:dark){.card{background:#1c1c1e;border-color:#38383a}}
+.card-title{font-size:13px;font-weight:600;color:#8e8e93;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+
+/* list items */
+.item-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid #e5e5ea}
+.item-row:last-child{border-bottom:none;padding-bottom:0}
+.item-row:first-child{padding-top:0}
+.item-name{font-size:15px;font-weight:500;flex:1;line-height:1.3}
+.item-right{text-align:right;flex-shrink:0}
+.dose-amt{font-size:14px;font-weight:500;color:#007aff}
+.pill-note{font-size:12px;color:#8e8e93;margin-top:2px;line-height:1.3}
+.pill-tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600;margin-top:3px}
+.t-meal{background:#e3f2fd;color:#1565c0}
+.t-empty{background:#fce4ec;color:#b71c1c}
+.t-sub{background:#e8f5e9;color:#1b5e20}
+.t-night{background:#ede7f6;color:#4527a0}
+.t-pre{background:#fff3e0;color:#e65100}
+.t-skip{background:#fce4ec;color:#c62828;opacity:.8}
+@media(prefers-color-scheme:dark){.t-meal{background:rgba(0,122,255,.15);color:#64b5f6}.t-empty{background:rgba(255,69,58,.12);color:#ff6b6b}.t-sub{background:rgba(50,215,75,.12);color:#81c784}.t-night{background:rgba(191,90,242,.12);color:#ce93d8}.t-pre{background:rgba(255,159,10,.12);color:#ffcc80}.t-skip{background:rgba(255,69,58,.1);color:#ff6b6b}}
+
+/* skip rows */
+.skip-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(255,59,48,.06);border:0.5px solid rgba(255,59,48,.18);margin-bottom:5px}
+.skip-name{font-size:13px;font-weight:500;color:#ff3b30;flex:1}
+.skip-why{font-size:12px;color:#8e8e93}
+@media(prefers-color-scheme:dark){.skip-name{color:#ff453a}}
+
+/* generate */
+.gen-btn{width:100%;padding:14px;border-radius:12px;background:#007aff;color:#fff;font-family:inherit;font-size:16px;font-weight:600;border:none;cursor:pointer;margin-top:4px;-webkit-appearance:none;transition:opacity .15s}
+.gen-btn:active{opacity:.8}
+
+/* result */
+#result{margin-top:14px}
+.res-header{background:#007aff;color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.res-mode{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.res-meta{font-size:12px;opacity:.8;margin-top:2px}
+.res-section{margin-bottom:14px}
+.rs-title{font-size:12px;font-weight:600;color:#8e8e93;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid #e5e5ea}
+@media(prefers-color-scheme:dark){.rs-title{border-color:#38383a}}
+
+/* tables */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;color:#8e8e93;text-transform:uppercase;letter-spacing:.4px;padding:4px 8px;text-align:left;border-bottom:0.5px solid #e5e5ea}
+td{font-size:13px;padding:7px 8px;border-bottom:0.5px solid #f2f2f7;line-height:1.3}
+tr:last-child td{border-bottom:none}
+@media(prefers-color-scheme:dark){th{color:#8e8e93;border-color:#38383a}td{border-color:#2c2c2e}}
+.over{color:#ff3b30;font-weight:500}
+.warn-c{color:#ff9f0a;font-weight:500}
+.ok{color:#34c759;font-weight:500}
+.nut-th{font-size:11px;color:#8e8e93;padding:4px 0;border-bottom:0.5px solid #e5e5ea}
+
+/* rule rows */
+.rule-row{padding:10px 0;border-bottom:0.5px solid #e5e5ea;display:flex;gap:10px;align-items:flex-start}
+.rule-row:last-child{border-bottom:none}
+.rule-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.rule-body{flex:1}
+.rule-title{font-size:14px;font-weight:500}
+.rule-sub{font-size:12px;color:#8e8e93;margin-top:2px;line-height:1.3}
+
+/* priority rows */
+.pri-row{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid #e5e5ea;align-items:flex-start}
+.pri-row:last-child{border-bottom:none}
+.pri-stars{font-size:12px;font-weight:600;color:#ff9f0a;min-width:32px;margin-top:2px}
+.pri-body{flex:1}
+.pri-name{font-size:14px;font-weight:500}
+.pri-desc{font-size:12px;color:#8e8e93;margin-top:2px;line-height:1.3}
+
+/* products */
+.prod-row{display:flex;gap:10px;padding:9px 0;border-bottom:0.5px solid #e5e5ea;align-items:flex-start}
+.prod-row:last-child{border-bottom:none}
+.prod-num{font-size:11px;color:#8e8e93;min-width:22px;margin-top:2px;font-weight:500}
+.prod-name{font-size:14px;font-weight:500;min-width:110px}
+.prod-detail{font-size:11px;color:#8e8e93;flex:1;line-height:1.4}
+
+/* info box */
+.info-box{background:#e3f2fd;border-radius:8px;padding:10px 12px;font-size:13px;color:#1565c0;margin-bottom:12px;line-height:1.5}
+@media(prefers-color-scheme:dark){.info-box{background:rgba(0,122,255,.12);color:#64b5f6}}
+.info-box strong{font-weight:600}
+
+.spacer{height:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Stack Protocol</div>
+    <div class="header-sub">100 kg &middot; LBM 74 kg &middot; BF 26%</div>
+  </div>
+  <div style="font-size:12px;color:#8e8e93;text-align:right">v2.0<br>Offline</div>
+</div>
+
+<nav class="nav-bar">
+  <button class="tab-btn active" onclick="switchTab('builder',this)">Today</button>
+  <button class="tab-btn" onclick="switchTab('nutrition',this)">Nutrients</button>
+  <button class="tab-btn" onclick="switchTab('binge',this)">Binge Guard</button>
+  <button class="tab-btn" onclick="switchTab('rules',this)">Rules</button>
+  <button class="tab-btn" onclick="switchTab('reference',this)">Products</button>
+</nav>
+
+<!-- ══════ TODAY ══════ -->
+<div id="page-builder" class="page active main">
+
+  <div class="card">
+    <div class="card-title">Adderall</div>
+    <div class="section-label" style="margin-bottom:6px">Today</div>
+    <div class="seg-group" id="add-grp">
+      <button class="seg-btn active" onclick="setAdd(true,this)">With Adderall</button>
+      <button class="seg-btn" onclick="setAdd(false,this)">Without Adderall</button>
+    </div>
+    <div id="dose-row" class="dose-row">
+      <div class="row-label">Dose</div>
+      <div style="display:flex;gap:5px">
+        <button class="dose-btn" onclick="setDose(10,this)">10 mg</button>
+        <button class="dose-btn active" onclick="setDose(15,this)">15 mg</button>
+        <button class="dose-btn" onclick="setDose(20,this)">20 mg</button>
+      </div>
+    </div>
+    <div class="info-box" style="margin-bottom:0;font-size:12px">
+      10 mg — light tasks / poor sleep &nbsp;&bull;&nbsp; 15 mg — default focus day &nbsp;&bull;&nbsp; 20 mg — high-output / deadline
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Primary Mode</div>
+    <div class="seg-group" id="mode-grp">
+      <button class="seg-btn active" onclick="setMode('sharp',this)">Sharp</button>
+      <button class="seg-btn" onclick="setMode('focus',this)">Focus</button>
+      <button class="seg-btn" onclick="setMode('relax',this)">Relax</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Add-on Modes</div>
+    <div class="section-label" style="margin-bottom:6px">Activity</div>
+    <div class="seg-group" id="extra-grp">
+      <button class="seg-btn" onclick="toggleX('workout',this)">Workout</button>
+      <button class="seg-btn" onclick="toggleX('performance',this)">Performance</button>
+      <button class="seg-btn" onclick="toggleX('social',this)">Social</button>
+    </div>
+    <div class="section-label" style="margin-bottom:6px">Feeling</div>
+    <div class="seg-group" id="feel-grp">
+      <button class="seg-btn feel-btn" onclick="toggleX('fatigue',this)">Brain Fatigue</button>
+      <button class="seg-btn feel-btn" onclick="toggleX('physical',this)">Body Tired</button>
+      <button class="seg-btn feel-btn" onclick="toggleX('down',this)">Low Mood</button>
+      <button class="seg-btn feel-btn" onclick="toggleX('anxiety',this)">Anxious</button>
+      <button class="seg-btn feel-btn" onclick="toggleX('poor_sleep',this)">Poor Sleep</button>
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="generate()">Generate Today's Stack</button>
+  <div id="result"></div>
+</div>
+
+<!-- ══════ NUTRIENTS ══════ -->
+<div id="page-nutrition" class="page main">
+  <div class="info-box">
+    <strong>Dosing note:</strong> Official ULs are based on a 70 kg adult. At 100 kg, water-soluble vitamins (B, C) can scale ×1.4, but fat-soluble vitamins (D, E, A) and minerals do not scale linearly — strict original ULs apply.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mineral Totals</div>
+    <table>
+      <tr><th>Nutrient</th><th>Sources &amp; Total</th><th>UL</th><th>Status</th></tr>
+      <tr>
+        <td style="font-weight:500">Zinc</td>
+        <td style="font-size:12px">GNC 18.5 + Prostate 15 + Testo 15 = 48.5 mg</td>
+        <td>40 mg</td>
+        <td class="over">Over limit</td>
+      </tr>
+      <tr>
+        <td style="font-weight:500">Selenium</td>
+        <td style="font-size:12px">GNC 55 + Prostate 60 + Stasis 200 = 315 mcg</td>
+        <td>400 mcg</td>
+        <td class="ok">Safe</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Vitamin D3</div>
+    <table>
+      <tr><th>Situation</th><th>Source</th><th>Total</th><th>UL</th><th>Status</th></tr>
+      <tr>
+        <td style="font-size:12px">With Adderall</td>
+        <td style="font-size:12px">Stasis 5000 IU only</td>
+        <td>5000 IU</td>
+        <td>4000 IU</td>
+        <td class="warn-c">Slightly over — single source OK, no stacking</td>
+      </tr>
+      <tr>
+        <td style="font-size:12px">No Adderall</td>
+        <td style="font-size:12px">Standalone 5000 IU</td>
+        <td>5000 IU</td>
+        <td>—</td>
+        <td class="ok">Safe</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Other Vitamins</div>
+    <table>
+      <tr><th>Nutrient</th><th>Sources</th><th>Total</th><th>UL</th><th>Status</th></tr>
+      <tr><td style="font-weight:500">B6</td><td style="font-size:12px">GNC + B Complex + Testo + Stasis</td><td>18 mg</td><td>100 mg</td><td class="ok">Safe</td></tr>
+      <tr><td style="font-weight:500">Niacin</td><td style="font-size:12px">GNC + B Complex + Beetroot</td><td>85 mg</td><td>35 mg (flush)</td><td class="ok">Safe — mostly niacinamide</td></tr>
+      <tr><td style="font-weight:500">Saffron (w/ Add)</td><td style="font-size:12px">Stasis 28 mg</td><td>28 mg</td><td>~30 mg</td><td class="ok">Safe</td></tr>
+      <tr><td style="font-weight:500">Saffron (no Add)</td><td style="font-size:12px">Standalone</td><td>30 mg</td><td>30 mg</td><td class="warn-c">At ceiling</td></tr>
+      <tr><td style="font-weight:500">Tribulus</td><td style="font-size:12px">Testo 750 + Energy 200</td><td>950 mg</td><td>—</td><td class="ok">Safe</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Permanently Banned</div>
+    <div class="skip-row">
+      <span class="skip-name">Zinc standalone</span>
+      <span class="skip-why">Total already 48.5 mg — exceeds UL 40 mg</span>
+    </div>
+    <div style="font-size:12px;color:#8e8e93;margin-top:8px;line-height:1.5">
+      Daily fixed sources: GNC 18.5 + Prostate 15 + TestoSupport 15 = <span style="color:#ff3b30;font-weight:600">48.5 mg</span>. No additional zinc under any circumstance.
+    </div>
+  </div>
+</div>
+
+<!-- ══════ BINGE GUARD ══════ -->
+<div id="page-binge" class="page main">
+  <div class="info-box">
+    <strong>ADHD binge mechanism:</strong> Without Adderall, dopamine deficiency → brain seeks fast DA sources → sugar/refined carbs trigger quickest DA spike → DA remains insufficient after eating → continued intake
+  </div>
+
+  <div class="card">
+    <div class="card-title">Auto-triggers</div>
+    <div class="rule-row">
+      <div class="rule-icon">1</div>
+      <div class="rule-body">
+        <div class="rule-title">No Adderall day → DLPA ×2 + Mucuna always in Dopamine Support group</div>
+        <div class="rule-sub">Directly replenish DA/NE precursors, suppress reward-seeking</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon">2</div>
+      <div class="rule-body">
+        <div class="rule-title">No Add + Relax → add Ashwagandha + Kanna + Saffron (full coverage)</div>
+        <div class="rule-sub">Cortisol↓ + impulsivity↓ + emotional eating handled simultaneously</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon">3</div>
+      <div class="rule-body">
+        <div class="rule-title">No Add + Low Mood → add Saffron + Kanna</div>
+        <div class="rule-sub">Emotional eating handled in parallel</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Priority Ranking</div>
+    <div class="pri-row">
+      <div class="pri-stars">★★★</div>
+      <div class="pri-body">
+        <div class="pri-name">Mucuna 1000 mg</div>
+        <div class="pri-desc">L-DOPA → direct DA replenishment; strongest DA restoration, suppresses reward-seeking</div>
+      </div>
+    </div>
+    <div class="pri-row">
+      <div class="pri-stars">★★★</div>
+      <div class="pri-body">
+        <div class="pri-name">DLPA 500 mg ×2</div>
+        <div class="pri-desc">DA/NE precursor; reduces DA craving at source; increases PEA (natural appetite regulator)</div>
+      </div>
+    </div>
+    <div class="pri-row">
+      <div class="pri-stars">★★</div>
+      <div class="pri-body">
+        <div class="pri-name">Saffron 30 mg</div>
+        <div class="pri-desc">Clinical evidence: reduces snacking and emotional eating via 5-HT mechanism</div>
+      </div>
+    </div>
+    <div class="pri-row">
+      <div class="pri-stars">★★</div>
+      <div class="pri-body">
+        <div class="pri-name">Ashwagandha KSM-66</div>
+        <div class="pri-desc">Lowers cortisol; elevated cortisol directly drives stress-driven binge eating</div>
+      </div>
+    </div>
+    <div class="pri-row">
+      <div class="pri-stars">★</div>
+      <div class="pri-body">
+        <div class="pri-name">Kanna 50 mg</div>
+        <div class="pri-desc">PDE4 inhibition; reduces reward-seeking behavior and impulsive eating</div>
+      </div>
+    </div>
+    <div class="pri-row">
+      <div class="pri-stars">★</div>
+      <div class="pri-body">
+        <div class="pri-name">Rhodiola 500 mg</div>
+        <div class="pri-desc">Reduces fatigue-driven eating; improves stress response</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ RULES ══════ -->
+<div id="page-rules" class="page main">
+
+  <div class="card">
+    <div class="card-title">Hard Safety Rules</div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">Zinc standalone — never enter stack</div>
+        <div class="rule-sub">GNC + Prostate + Testo = 48.5 mg, already over UL 40 mg</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">With Adderall — skip standalone D3</div>
+        <div class="rule-sub">Stasis already contains 5000 IU; stacking = 10,000 IU, exceeds UL</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">With Adderall — skip standalone Mucuna</div>
+        <div class="rule-sub">Amphetamine + L-DOPA = severe DA excess risk</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">With Adderall — skip standalone Kanna</div>
+        <div class="rule-sub">Serotonergic stacking risk (Adderall releases 5-HT)</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">With Adderall — skip standalone Saffron</div>
+        <div class="rule-sub">Stasis already contains 28 mg; stacking exceeds safe ceiling 30 mg/day</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">With Adderall — skip standalone Ashwagandha</div>
+        <div class="rule-sub">Stasis already contains Shoden® 120 mg; extra KSM-66 1000 mg may over-suppress arousal</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff3b30">✕</div>
+      <div class="rule-body">
+        <div class="rule-title">Selenium — no additional supplementation</div>
+        <div class="rule-sub">Already 315 mcg; UL 400 mcg — no safe margin remaining</div>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-icon" style="color:#ff9f0a">!</div>
+      <div class="rule-body">
+        <div class="rule-title">With Adderall + Sharp — skip standalone Rhodiola</div>
+        <div class="rule-sub">TestoSupport already contains 400 mg; stacking 500 mg over-activates CNS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Deduplication Rules (once mechanism)</div>
+    <div style="font-size:12px;color:#8e8e93;margin-bottom:8px;line-height:1.5">The following compounds appear only once across all concurrent modes — highest dose wins:</div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Red Ginseng</div><div class="rule-sub">Triggered by Sharp / Workout / Performance / Social / Fatigue / Poor Sleep — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Energy Support</div><div class="rule-sub">Sharp / Workout / Fatigue / Physical tired — count once (take ×2)</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Beetroot + Grape Seed</div><div class="rule-sub">Sharp / Workout / Physical tired — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Tongkat Complex</div><div class="rule-sub">Performance / Social — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Black Ginger</div><div class="rule-sub">Workout ×1 / Performance ×2 — when both selected take ×2</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Maca</div><div class="rule-sub">Performance ×3 / Social ×2 — when both selected take ×3 (Performance priority)</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">DLPA / Mucuna</div><div class="rule-sub">Low Mood / Dopamine Support — count once each</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Ashwagandha</div><div class="rule-sub">Relax / Anxiety / Poor Sleep — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Kanna</div><div class="rule-sub">Relax / Social / Low Mood / Anxiety — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Saffron</div><div class="rule-sub">Relax / Low Mood / Anxiety — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Qi Ju Di Huang Wan</div><div class="rule-sub">Relax / Poor Sleep — count once</div></div></div>
+    <div class="rule-row"><div class="rule-body"><div class="rule-title" style="font-size:13px">Rhodiola</div><div class="rule-sub">Sharp (no Add) / Fatigue (no Add) — count once</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Timing Rules</div>
+    <div class="rule-row">
+      <div class="rule-body">
+        <div class="rule-title">DLPA, Mucuna</div>
+        <div class="rule-sub">Fasted: 30 min before meal or between meals. Avoid high-protein meals (amino acid competition at BBB). If both taken same day, space at least 30 min apart.</div>
+        <span class="pill-tag t-empty" style="margin-top:4px">Fasted</span>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-body">
+        <div class="rule-title">4-DMA, Bacopa, Black Ginger, Ashwagandha, Vitamin D3</div>
+        <div class="rule-sub">Take with fat-containing food — absorption significantly improved.</div>
+        <span class="pill-tag t-meal" style="margin-top:4px">With meal</span>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-body">
+        <div class="rule-title">Beetroot + Grape Seed</div>
+        <div class="rule-sub">30–45 min before training — captures the NO peak window.</div>
+        <span class="pill-tag t-pre" style="margin-top:4px">Pre-workout</span>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-body">
+        <div class="rule-title">Qi Ju Di Huang Wan, Red Ginseng (poor sleep), Ashwagandha</div>
+        <div class="rule-sub">1–2 hours before bed.</div>
+        <span class="pill-tag t-night" style="margin-top:4px">Evening</span>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-body">
+        <div class="rule-title">Kanna</div>
+        <div class="rule-sub">Sublingual for faster onset — ideal for social situations or acute anxiety.</div>
+        <span class="pill-tag t-sub" style="margin-top:4px">Sublingual</span>
+      </div>
+    </div>
+    <div class="rule-row">
+      <div class="rule-body">
+        <div class="rule-title">GNC Vitapak, B Complex, Stasis, TestoSupport, Prostate</div>
+        <div class="rule-sub">With food — improves absorption and reduces GI irritation.</div>
+        <span class="pill-tag t-meal" style="margin-top:4px">With meal</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ADHD Dose Adjustments</div>
+    <div class="info-box" style="margin-bottom:10px;font-size:12px">
+      ADHD involves structural DA/NE deficiency; Adderall accelerates consumption of multiple precursors. Doses below are higher than standard adult recommendations.
+    </div>
+    <table>
+      <tr><th>Compound</th><th>Standard</th><th>ADHD adjusted</th></tr>
+      <tr><td style="font-weight:500">Citicoline</td><td>250 mg</td><td>×2 (no Add); ×1–2 (with Add)</td></tr>
+      <tr><td style="font-weight:500">Alpha GPC</td><td>150 mg</td><td>×2 (300 mg)</td></tr>
+      <tr><td style="font-weight:500">Lion's Mane</td><td>500 mg</td><td>×2 (1000 mg)</td></tr>
+      <tr><td style="font-weight:500">DLPA</td><td>500 mg</td><td>×2 (1000 mg, no Add days)</td></tr>
+      <tr><td style="font-weight:500">Energy Support</td><td>×1</td><td>×2 (mitochondrial ATP)</td></tr>
+      <tr><td style="font-weight:500">B Complex</td><td>×1</td><td>×2 (MTHFR methylation)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════ PRODUCTS ══════ -->
+<div id="page-reference" class="page main">
+  <div class="card">
+    <div class="card-title">All 29 Products</div>
+    <div id="prod-list"></div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS=[
+  [1,'Adderall','Amphetamine salts (15 mg default)'],
+  [2,'Rhodiola','Rhodiola rosea extract 500 mg'],
+  [3,'Beetroot + Grape Seed','Niacin 20 mg, B6 4 mg, B12 50 mcg, Beet Root Powder 625 mg, NO3-T® Nitrate Powder, MegaNatural®-BP Grape Extract 300 mg'],
+  [4,'Prostate Support','Zinc 15 mg, Selenium 60 mcg, Cu 1 mg, Saw Palmetto, Nettle Root, Beta-Sitosterol, Pumpkin Seed Oil, Pygeum (322 mg matrix)'],
+  [5,"Lion's Mane",'Lion\'s Mane extract 500 mg'],
+  [6,'Maca','Maca extract 200 mg'],
+  [7,'Milk Thistle','Milk Thistle extract 1300 mg (50% Silymarin)'],
+  [8,'Mucuna','Mucuna pruriens extract (seed) 1000 mg'],
+  [9,'Saffron','Crocus sativus extract 30 mg'],
+  [10,'Citicoline','Cognizin® Citicoline 250 mg'],
+  [11,'Kanna','Sceletium tortuosum extract 50 mg'],
+  [12,'Sabroxy','Oroxylum indicum extract 100 mg (10% Oroxylin A)'],
+  [13,'Alpha GPC','Alpha GPC 150 mg'],
+  [14,'DLPA','DL-Phenylalanine 500 mg'],
+  [15,'4-DMA-7,8-DHF','4\'-Dimethylamino-7,8-dihydroxyflavone 10 mg'],
+  [16,'Bacopa','Bacopa monnieri extract 100 mg (Cognance)'],
+  [17,'Black Ginger','Kaempferia parviflora extract 200 mg (10% 5,7-DMF)'],
+  [18,'Testosterone Support','B6 7.5 mg, Mg 120 mg, Zn 15 mg, Tribulus 750 mg, ALCAR 500 mg, Rhodiola 400 mg, Nettle Root 250 mg, Beta-Ecdysterone 150 mg, DIM 150 mg, Epimedium 100 mg, Tongkat Ali 10 mg'],
+  [19,'Tongkat Complex','Eurycoma longifolia 50 mg (7 mg Eurycomanone), Mucuna 200 mg (15% L-DOPA), Epimedium 200 mg (10% Icariin), Pregnenolone 2.5 mg, Boron 1.5 mg, Iodine 100 mcg'],
+  [20,'Korean Red Ginseng','Pure Korean Red Ginseng 3000 mg'],
+  [21,'American Ginseng','Calming adaptogen (Panax quinquefolius)'],
+  [22,'Qi Ju Di Huang Wan','TCM formula: nourish liver & kidney, eye support'],
+  [23,'GNC Vitapak','Vit A 700 mcg, C 100 mg, D3 25 mcg, E 11 mg, K 70 mcg, B1/B2/B6/B12, Folate, Biotin, Ca, Mg, Zn 18.5 mg, Se 55 mcg, Cr, L-Theanine 200 mg, Blueberry 30 mg, Milk Thistle 650 mg, L-Arg 600 mg'],
+  [24,'B Complex','Vit C 150 mg, B1 100 mg, B2 20 mg, Niacin 25 mg, B6 2 mg, Folate 665 mcg, B12 15 mcg, Biotin 30 mcg'],
+  [25,'Zinc','Zinc gluconate 50 mg — NEVER use, already over UL'],
+  [26,'Vitamin D3','Cholecalciferol 125 mcg (5000 IU)'],
+  [27,'Stasis','D3 5000 IU, Vit E 15 mg, B6 5 mg, B12 1000 mcg, Se 200 mcg, Turmeric 200 mg, L-Theanine 200 mg, Broccoli Seed 125 mg, Shoden® Ashwagandha 120 mg, CoQ10 100 mg, Salidroside 30 mg, Saffron 28 mg, Spermidine 10 mg'],
+  [28,'Energy Support','Tribulus 200 mg, Dioscorea 200 mg, Fenugreek 200 mg, Vigna radiata 250 mg, Cordyceps militaris 10:1 250 mg'],
+  [29,'Ashwagandha','KSM-66® 600 mg + Ashwagandha powder 400 mg + Ginger extract 20 mg']
+];
+
+(function(){
+  const el=document.getElementById('prod-list');
+  el.innerHTML=PRODUCTS.map(([n,name,detail])=>`<div class="prod-row"><div class="prod-num">#${n}</div><div class="prod-name">${name}</div><div class="prod-detail">${detail}</div></div>`).join('');
+})();
+
+// ── state ──
+let S={add:true,dose:15,mode:'sharp',extras:new Set()};
+
+function setAdd(v,btn){
+  S.add=v;
+  document.querySelectorAll('#add-grp .seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('dose-row').style.display=v?'flex':'none';
+}
+function setDose(d,btn){
+  S.dose=d;
+  document.querySelectorAll('.dose-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function setMode(m,btn){
+  S.mode=m;
+  document.querySelectorAll('#mode-grp .seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleX(m,btn){
+  if(S.extras.has(m)){S.extras.delete(m);btn.classList.remove('active');}
+  else{S.extras.add(m);btn.classList.add('active');}
+}
+
+// ── tab switch ──
+function switchTab(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── generate ──
+function generate(){
+  const{add,dose,mode,extras}=S;
+  const sharp=mode==='sharp', focus=mode==='focus', relax=mode==='relax';
+  const workout=extras.has('workout'), perf=extras.has('performance'), social=extras.has('social');
+  const fatigue=extras.has('fatigue'), physical=extras.has('physical');
+  const down=extras.has('down'), anxiety=extras.has('anxiety'), poor=extras.has('poor_sleep');
+
+  // items: {name, dose, note, tag}  tag: meal|empty|sub|night|pre|skip
+  let base=[
+    {name:'GNC Vitapak',dose:'×1',note:'With meal',tag:'meal'},
+    {name:'B Complex',dose:'×2',note:'ADHD methylation support',tag:'meal'},
+    {name:'Prostate Support',dose:'×1',note:'With meal',tag:'meal'},
+    {name:'Testosterone Support',dose:'×1',note:'With meal (includes Rhodiola 400 mg + Zinc 15 mg)',tag:'meal'},
+    {name:'Milk Thistle',dose:'1300 mg',note:add?'Liver protection — included with Add-day kit':'Liver protection — daily base',tag:'meal'},
+  ];
+  if(!add){
+    base.push({name:'Vitamin D3',dose:'5000 IU',note:'No-Adderall days only',tag:'meal'});
+  } else {
+    base.push({name:'Vitamin D3',dose:'— Skip',note:'Stasis already contains 5000 IU',tag:'skip'});
+    base.push({name:'Stasis',dose:'×1',note:'Required with Adderall (Ashwagandha + Saffron + Theanine inside)',tag:'meal'});
+  }
+
+  let skips=[];
+  if(add){
+    skips=[
+      {name:'Mucuna (standalone)',why:'Adderall + L-DOPA = severe DA excess risk'},
+      {name:'Kanna (standalone)',why:'Serotonergic stacking risk with Adderall'},
+      {name:'Saffron (standalone)',why:'Stasis already contains 28 mg — stacking exceeds safe ceiling'},
+      {name:'Ashwagandha (standalone)',why:'Stasis has Shoden® 120 mg — extra KSM-66 may over-suppress arousal'},
+    ];
+    if(sharp) skips.push({name:'Rhodiola (standalone)',why:'TestoSupport has 400 mg; Sharp + Add stacking over-activates CNS'});
+    if(sharp) skips.push({name:'DLPA (Sharp + Add)',why:'Adderall fully covers DA/NE — DLPA not needed'});
+  }
+
+  let cog=[];
+  cog.push({name:'Citicoline',dose:add?(sharp?'250 mg ×1':'250 mg ×2'):'250 mg ×2',note:'With meal',tag:'meal'});
+  cog.push({name:'Alpha GPC',dose:'150 mg ×2',note:'ADHD neuroplasticity support',tag:'meal'});
+  cog.push({name:"Lion's Mane",dose:'500 mg ×2',note:'NGF — neural repair & growth',tag:'meal'});
+  cog.push({name:'Bacopa',dose:'100 mg ×1',note:'Memory & neuroprotection — with meal',tag:'meal'});
+  if(sharp||focus) cog.push({name:'Sabroxy',dose:'100 mg ×1',note:'Cognitive enhancement',tag:'meal'});
+  if(sharp) cog.push({name:'4-DMA-7,8-DHF',dose:'10 mg ×1',note:'With fatty meal — TrkB agonist',tag:'meal'});
+
+  let modeStack=[];
+  if(sharp||focus){
+    modeStack.push({name:'Energy Support',dose:'×2',note:'Cordyceps — mitochondrial ATP, cognitive endurance',tag:'meal'});
+    modeStack.push({name:'Korean Red Ginseng',dose:'3000 mg',note:'Sustained output adaptogen',tag:'meal'});
+    modeStack.push({name:'Beetroot + Grape Seed',dose:'×1',note:'30–45 min before training/peak work — NO↑ cerebral blood flow',tag:'pre'});
+  }
+  if(sharp&&!add){
+    modeStack.push({name:'Rhodiola',dose:'500 mg',note:'No-Add only (TestoSupport has 400 mg; total 900 mg is safe)',tag:'meal'});
+  }
+  if(!add){
+    modeStack.push({name:'DLPA',dose:'500 mg ×2',note:'Fasted — 30 min before meal or between meals',tag:'empty'});
+    modeStack.push({name:'Mucuna',dose:'1000 mg',note:'Fasted — space 30 min from DLPA; skip if Performance (Tongkat covers)',tag:'empty'});
+  }
+  if(relax){
+    if(!add){
+      modeStack.push({name:'Ashwagandha KSM-66',dose:'1000 mg',note:'Evening — with fatty meal',tag:'night'});
+      modeStack.push({name:'Kanna',dose:'50 mg',note:'Sublingual',tag:'sub'});
+      modeStack.push({name:'Saffron',dose:'30 mg',note:'5-HT support',tag:'meal'});
+    }
+    modeStack.push({name:'Qi Ju Di Huang Wan',dose:'×1',note:'Evening — nourish liver & kidney',tag:'night'});
+    if(add) modeStack.push({name:'Note',dose:'',note:'Adderall: prefer 10 mg on Relax days — lower activation needed',tag:'skip'});
+  }
+  if(social){
+    modeStack.push({name:'Tongkat Complex',dose:'×1',note:'Testosterone support → confidence (dedup)',tag:'meal'});
+    modeStack.push({name:'Korean Red Ginseng',dose:'3000 mg',note:'Alertness adaptogen (dedup)',tag:'meal'});
+    modeStack.push({name:'American Ginseng',dose:'×1',note:'Calming — balances over-activation',tag:'meal'});
+    if(!add) modeStack.push({name:'Kanna',dose:'50 mg',note:'Social relaxation — sublingual (dedup)',tag:'sub'});
+  }
+
+  let extraStack=[];
+  if(workout){
+    extraStack.push({name:'Beetroot + Grape Seed',dose:'×1',note:'30–45 min pre-workout (dedup)',tag:'pre'});
+    extraStack.push({name:'Energy Support',dose:'×2',note:'Cordyceps ATP (dedup)',tag:'meal'});
+    extraStack.push({name:'Black Ginger',dose:perf?'200 mg ×2':'200 mg ×1',note:'AMPK activation + blood flow — with meal',tag:'meal'});
+    extraStack.push({name:'Korean Red Ginseng',dose:'3000 mg',note:'Anti-fatigue adaptogen (dedup)',tag:'meal'});
+  }
+  if(perf){
+    extraStack.push({name:'Tongkat Complex',dose:'×1',note:'Eurycomanone + Icariin (PDE5i) + L-DOPA 30 mg — replaces standalone Mucuna',tag:'meal'});
+    extraStack.push({name:'Maca',dose: social?'200 mg ×3 (Performance priority)':'200 mg ×3',note:'600 mg',tag:'meal'});
+    extraStack.push({name:'Black Ginger',dose:'200 mg ×2',note:'400 mg — optimal PDE5 inhibition ceiling — with meal',tag:'meal'});
+    extraStack.push({name:'Korean Red Ginseng',dose:'3000 mg',note:'(dedup)',tag:'meal'});
+    extraStack.push({name:'American Ginseng',dose:'×1',note:'Balance over-activation',tag:'meal'});
+    extraStack.push({name:'Testosterone Support',dose:'×1',note:'Hormonal foundation (dedup)',tag:'meal'});
+    if(!add) extraStack.push({name:'Mucuna (standalone)',dose:'— Covered by Tongkat',note:'Tongkat Complex contains L-DOPA — no standalone needed',tag:'skip'});
+  }
+  if(social&&!perf){
+    extraStack.push({name:'Maca',dose:'200 mg ×2',note:'400 mg (Social)',tag:'meal'});
+  }
+
+  let feelStack=[];
+  if(fatigue){
+    feelStack.push({name:"Lion's Mane",dose:'500 mg ×2',note:'NGF neural repair (dedup)',tag:'meal'});
+    feelStack.push({name:'Bacopa',dose:'100 mg ×1',note:'Neuroprotection (dedup)',tag:'meal'});
+    feelStack.push({name:'Energy Support',dose:'×2',note:'Cordyceps mitochondria (dedup)',tag:'meal'});
+    if(!add) feelStack.push({name:'Rhodiola',dose:'500 mg',note:'No-Add only — anti-brain-fatigue (dedup)',tag:'meal'});
+  }
+  if(physical){
+    feelStack.push({name:'Beetroot + Grape Seed',dose:'×1',note:'NO↑ circulation (dedup)',tag:'pre'});
+    feelStack.push({name:'Energy Support',dose:'×2',note:'(dedup)',tag:'meal'});
+    feelStack.push({name:'Korean Red Ginseng',dose:'3000 mg',note:'Anti-fatigue adaptogen (dedup)',tag:'meal'});
+  }
+  if(down){
+    if(!add){
+      feelStack.push({name:'DLPA',dose:'500 mg ×2',note:'Fasted (dedup)',tag:'empty'});
+      feelStack.push({name:'Mucuna',dose:'1000 mg',note:'Fasted — space 30 min from DLPA (dedup)',tag:'empty'});
+      feelStack.push({name:'Saffron',dose:'30 mg',note:'5-HT support (dedup)',tag:'meal'});
+      feelStack.push({name:'Kanna',dose:'50 mg',note:'Mood lift + PDE4i — sublingual (dedup)',tag:'sub'});
+    } else {
+      if(focus) feelStack.push({name:'DLPA',dose:'500 mg ×1',note:'Focus + Add: light DA top-up — safe',tag:'empty'});
+      else feelStack.push({name:'DLPA',dose:'— Covered by Adderall',note:'Sharp + Add: Adderall fully covers DA/NE',tag:'skip'});
+    }
+  }
+  if(anxiety){
+    if(!add){
+      feelStack.push({name:'Ashwagandha KSM-66',dose:'1000 mg',note:'With meal (dedup)',tag:'meal'});
+      feelStack.push({name:'Kanna',dose:'50 mg',note:'Sublingual (dedup)',tag:'sub'});
+      feelStack.push({name:'Saffron',dose:'30 mg',note:'(dedup)',tag:'meal'});
+    } else {
+      feelStack.push({name:'Anxiety — Stasis covers',dose:'',note:'Stasis: Ashwagandha 120 mg + Theanine 200 mg + Saffron 28 mg',tag:'skip'});
+    }
+  }
+  if(poor){
+    feelStack.push({name:'Korean Red Ginseng',dose:'3000 mg (evening)',note:'Personal experience: adaptogen helps regulate sleep cycle',tag:'night'});
+    feelStack.push({name:'Qi Ju Di Huang Wan',dose:'×1 (evening)',note:'Nourish liver & kidney (dedup)',tag:'night'});
+    if(!add) feelStack.push({name:'Ashwagandha KSM-66',dose:'1000 mg (evening)',note:'Cortisol↓ → improved sleep onset (dedup)',tag:'night'});
+  }
+
+  // deduplicate
+  const seen=new Set();
+  function dd(arr){
+    return arr.filter(item=>{
+      const k=item.name.replace(/\s*[\(（].*|— .*/,'').trim();
+      if(item.tag==='skip') return true;
+      if(seen.has(k)) return false;
+      seen.add(k); return true;
+    });
+  }
+  seen.clear();
+  base.forEach(i=>{const k=i.name.replace(/\s*[\(（].*/,'').trim();if(i.tag!=='skip')seen.add(k);});
+  const dc=dd(cog);
+  cog.forEach(i=>{const k=i.name.replace(/\s*[\(（].*/,'').trim();if(i.tag!=='skip')seen.add(k);});
+  const dm=dd(modeStack);
+  modeStack.forEach(i=>{const k=i.name.replace(/\s*[\(（].*/,'').trim();if(i.tag!=='skip')seen.add(k);});
+  const de=dd(extraStack);
+  extraStack.forEach(i=>{const k=i.name.replace(/\s*[\(（].*/,'').trim();if(i.tag!=='skip')seen.add(k);});
+  const df=dd(feelStack);
+
+  const total=[...base,...dc,...dm,...de,...df].filter(i=>i.tag!=='skip').length;
+
+  const tagLabel={meal:'With meal',empty:'Fasted',sub:'Sublingual',night:'Evening',pre:'Pre-workout',skip:'Skip'};
+  const tagClass={meal:'t-meal',empty:'t-empty',sub:'t-sub',night:'t-night',pre:'t-pre',skip:'t-skip'};
+
+  function ri(arr){
+    return arr.map(item=>`<div class="item-row">
+      <div style="flex:1">
+        <div class="item-name">${item.name}</div>
+        ${item.note?`<div class="pill-note">${item.note}</div>`:''}
+        ${item.tag&&item.tag!=='skip'?`<span class="pill-tag ${tagClass[item.tag]||''}">${tagLabel[item.tag]||''}</span>`:''}
+      </div>
+      <div class="item-right">
+        <div class="dose-amt">${item.dose}</div>
+      </div>
+    </div>`).join('');
+  }
+
+  function rs(arr){
+    return arr.map(s=>`<div class="skip-row"><span class="skip-name">Skip: ${s.name}</span><span class="skip-why">${s.why}</span></div>`).join('');
+  }
+
+  const modeNames={sharp:'Sharp',focus:'Focus',relax:'Relax'};
+  const extrasText=[...extras].map(e=>({workout:'Workout',performance:'Performance',social:'Social',fatigue:'Brain Fatigue',physical:'Body Tired',down:'Low Mood',anxiety:'Anxious',poor_sleep:'Poor Sleep'}[e]||e)).join(' · ');
+
+  const html=`
+  <div class="res-header">
+    <div class="res-mode">${modeNames[mode]}${add?' + Adderall '+dose+' mg':''}</div>
+    <div class="res-meta">${extrasText||'No add-ons'} &nbsp;·&nbsp; ${total} items</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Daily Base</div>
+    ${ri(base)}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cognitive Stack</div>
+    ${ri(dc)}
+  </div>
+
+  ${dm.length?`<div class="card"><div class="card-title">${modeNames[mode]} Mode</div>${ri(dm)}</div>`:''}
+  ${de.length?`<div class="card"><div class="card-title">Add-on Modes</div>${ri(de)}</div>`:''}
+  ${df.length?`<div class="card"><div class="card-title">Feeling Support</div>${ri(df)}</div>`:''}
+
+  ${skips.length?`<div class="card"><div class="card-title">Safety Skips Today</div>${rs(skips)}</div>`:''}
+  `;
+
+  document.getElementById('result').innerHTML=html;
+  setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+</script>
+</body>
+</html>
