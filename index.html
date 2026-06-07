@@ -33,7 +33,7 @@ async function loadLog() {
   if (_gistReady) return _memLog;
   setSyncStatus('Loading cloud data…', 'var(--hint)');
   try {
-    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+    const r = await fetch(`https://gist.github.com/wenmao1992/${GIST_ID}`, {
       headers: { Authorization: `token ${GIST_TOKEN}`, Accept: 'application/vnd.github.v3+json' }
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
