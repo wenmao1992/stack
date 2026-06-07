@@ -18,14 +18,14 @@ const GIST_TOKEN='github_pat_11ABT6QGI0krPfbte4XNsn_yJJzD9u4ScNA720b8Oj4MnkhveLA
 const GIST_FILE='stack_log.json';
 let _memLog={};
 let _gistReady=false;
-
+ 
 function setSyncStatus(msg, color) {
   const el = document.getElementById('sync-status');
   if (!el) return;
   el.textContent = msg;
   el.style.color = color || 'var(--hint)';
 }
-
+ 
 async function loadLog() {
   if (_gistReady) return _memLog;
   setSyncStatus('Loading cloud data…', 'var(--hint)');
@@ -43,7 +43,7 @@ async function loadLog() {
   }
   return _memLog;
 }
-
+ 
 async function saveLog(log) {
   _memLog = log;
   _gistReady = true;
@@ -92,12 +92,55 @@ async function saveLog(log) {
     await saveLog(log);
   }
   render();}// Manual overrides (do NOT auto-log; they set the record directly)async function resetProstateLog(){ const l=await loadLog(); delete l.lastProstateDate; await saveLog(l); logMsg='Alternate-day log reset.'; render(); }async function markProstateToday(){ const l=await loadLog(); l.lastProstateDate=todayStr(); await saveLog(l); logMsg='Manually marked as taken today.'; render(); }async function markProstateYesterday(){ const l=await loadLog(); l.lastProstateDate=yesterdayStr(); await saveLog(l); logMsg='Marked as taken yesterday → skipped today.'; render(); }// ── Render (pure display — never logs) ───────────────────────────────────────async function render() {  const explorer = document.getElementById('explorer-cb').checked;  const ps = await prostateStatus();  const prostateOn = ps.on;  const groups = getStack(S.add, S.mode, S.acts, S.feels, prostateOn);  const usedKeys = new Set(groups.flatMap(g => g.items.map(i => i.key)));  const orphans  = findOrphans(usedKeys);  const out = document.getElementById('output');  const addLabel = S.add==='yes' ? `Adderall ${S.dose} mg` : 'No Adderall';  const actLabel = [...S.acts].map(cap).join(' + ');  const feelLabel= [...S.feels].map(cap).join(' + ');  const dayDesc  = [cap(S.mode), actLabel, feelLabel].filter(Boolean).join(' · ');  let html = '<hr>';  html += `<div class="day-badge ${S.add==='yes'?'hadd':'noadd'}"><div class="dot"></div>${addLabel} · ${dayDesc}${explorer?' · <span style="color:var(--warn)">explorer</span>':''}</div>`;  // ── Alternate-day (Prostate Support) banner ──  if (prostateOn) {    const actions = `<button onclick="markProstateYesterday()">Skip today instead</button><button onclick="resetProstateLog()">Reset log</button>`;    html += `<div class="orphan-banner" style="border-color:rgba(91,156,246,.25);background:var(--info-dim);color:var(--info)">      <strong>Prostate Support — ON today (alternate day).</strong> ${ps.last ? 'Last taken '+ps.last+'. ' : 'No prior record. '}${logMsg}      <div class="log-actions">${actions}</div>    </div>`;  } else {    const actions = `<button onclick="resetProstateLog()">Take today instead</button>`;    html += `<div class="orphan-banner">      <strong>Prostate Support — OFF today (alternate day).</strong> Taken ${ps.last}, so it's skipped today and returns tomorrow. ${logMsg}      <div class="log-actions">${actions}</div>    </div>`;  }  // ── Zinc total banner (dynamic on Prostate state) ──  if (prostateOn) {    html += `<div class="orphan-banner" style="border-color:rgba(246,168,91,.25)">      <strong>Zinc today ≈ 48.5 mg.</strong> GNC 18.5 + Prostate 15 + TestoSupport 15 — briefly over the 40 mg UL by design; the alternate-day schedule keeps the weekly average ~41 mg. Standalone Zinc cap is never taken.    </div>`;  } else {    html += `<div class="orphan-banner" style="border-color:var(--border);background:var(--surface2);color:var(--muted)">      <strong>Zinc today ≈ 33.5 mg.</strong> GNC 18.5 + TestoSupport 15 (no Prostate) — within range. Standalone Zinc cap is never taken.    </div>`;  }  // ── Non-intentional orphans (exclude variant pairs + alternate-day keys) ──  const ignore = ['Citicoline_1x','Citicoline_2x','DLPA_1x','DLPA_2x','Maca_2x','Maca_3x','Black_Ginger_1x','Black_Ginger_2x','Vitamin_D3','Stasis', ...ALT_DAY_KEYS];  const unexpectedOrphans = orphans.filter(k => !ignore.includes(k));  const variantPairs = [    ['Citicoline_1x','Citicoline_2x'],    ['DLPA_1x','DLPA_2x'],    ['Maca_2x','Maca_3x'],    ['Black_Ginger_1x','Black_Ginger_2x'],    ['Vitamin_D3','Stasis'],  ];  const flagged = new Set();  unexpectedOrphans.forEach(k => {    const pair = variantPairs.find(p => p.includes(k));    if (pair) {      if (!usedKeys.has(pair[0]) && !usedKeys.has(pair[1])) flagged.add(pair.join(' / '));    } else {      flagged.add(k);    }  });  if (flagged.size > 0) {    const names = [...flagged].map(k => {      if (k.includes(' / ')) return k.split(' / ').map(x => DB[x]?.name || x).join(' or ');      return DB[k]?.name || k;    });    html += `<div class="orphan-banner" style="border-color:rgba(246,91,91,.25);background:var(--danger-dim);color:var(--danger)">      <strong>Heads up — these supplements aren't in today's stack:</strong><br>${names.join(', ')}.<br>      Want to add any of these? Select a relevant mode or modifier above.    </div>`;  }  html += '<div class="stack-list">';  let total = 0;  groups.forEach(g => {    html += `<div class="ghead">${g.label}</div>`;    g.items.forEach(item => {      const d = DB[item.key];      if (!d) return;      total++;      html += `<div class="sitem" onclick="openModal('${item.key}')">        <div class="il">          <div class="ibar" style="background:${d.color}"></div>          <div>            <div class="iname">${d.name}</div>            <div class="itiming">${d.timing}</div>          </div>        </div>        <div class="ir">          <span class="iserving">${item.serving}</span>          <span class="chev">›</span>        </div>      </div>`;    });  });  html += '</div>';  html += `<div class="sfooter">${total} items · tap any for details</div>`;
-  if (_saveError) html += `<div class="sfooter" style="color:var(--danger);margin-top:4px">⚠️ ${_saveError}</div>`;  out.innerHTML = html;  out.scrollIntoView({ behavior:'smooth', block:'nearest' });}function cap(s) {  const map = { sharp:'Sharp', focus:'Focus', relax:'Relax', workout:'Workout', performance:'Performance', social:'Social',    fatigue:'Brain fatigue', physical_tired:'Physical tired', down:'Low mood', anxiety:'Anxiety', poor_sleep:'Poor sleep' };  return map[s] || (s.charAt(0).toUpperCase() + s.slice(1));}function openModal(key) {  const d = DB[key]; if (!d) return;  const rows = Object.entries(d.details).map(([k,v]) =>    `<tr><td>${k}</td><td>${v}</td></tr>`).join('');  document.getElementById('modal').innerHTML = `    <div class="mov" id="mov" onclick="if(event.target===this)closeModal()">      <div class="mbox">        <div class="mhandle"></div>        <div class="mname">${d.name}</div>        <div class="mtiming">${d.timing}</div>        <table class="mtable"><tbody>${rows}</tbody></table>        <button class="closebtn" onclick="closeModal()">Dismiss</button>      </div>    </div>`;}function closeModal() { document.getElementById('modal').innerHTML=''; }// ── Event wiring ───────────────────────────────────────────────────────────document.querySelectorAll('[data-g="add"]').forEach(b => {  b.addEventListener('click', () => {    document.querySelectorAll('[data-g="add"]').forEach(x => x.classList.remove('on'));    b.classList.add('on'); S.add = b.dataset.v;    const ds = document.getElementById('dose-sec');    ds.style.opacity = S.add==='yes' ? '1' : '0.28';    ds.style.pointerEvents = S.add==='yes' ? '' : 'none';  });});document.querySelectorAll('[data-g="dose"]').forEach(b => {  b.addEventListener('click', () => {    document.querySelectorAll('[data-g="dose"]').forEach(x => x.classList.remove('on'));    b.classList.add('on'); S.dose = b.dataset.v;  });});document.querySelectorAll('[data-g="mode"]').forEach(b => {  b.addEventListener('click', () => {    document.querySelectorAll('[data-g="mode"]').forEach(x => x.classList.remove('on'));    b.classList.add('on'); S.mode = b.dataset.v;  });});document.querySelectorAll('[data-g="act"]').forEach(b => {  b.addEventListener('click', () => {    const v = b.dataset.v;    if (S.acts.has(v)) { S.acts.delete(v); b.classList.remove('on'); }    else { S.acts.add(v); b.classList.add('on'); }  });});document.querySelectorAll('[data-g="feel"]').forEach(b => {  b.addEventListener('click', () => {    const v = b.dataset.v;    if (S.feels.has(v)) { S.feels.delete(v); b.classList.remove('on'); }    else { S.feels.add(v); b.classList.add('on'); }  });});document.getElementById('explorer-cb').addEventListener('change', e => {  document.getElementById('explorer-row').classList.toggle('active', e.target.checked);});document.querySelectorAll('[data-g="score"]').forEach(function(b) {
-  b.addEventListener('click', function() {
-    document.querySelectorAll('[data-g="score"]').forEach(function(x) { x.classList.remove('on'); });
-    b.classList.add('on');
-    S.score = b.dataset.v;
+  if (_saveError) html += `<div class="sfooter" style="color:var(--danger);margin-top:4px">⚠️ ${_saveError}</div>`;  out.innerHTML = html;  out.scrollIntoView({ behavior:'smooth', block:'nearest' });}function cap(s) {  const map = { sharp:'Sharp', focus:'Focus', relax:'Relax', workout:'Workout', performance:'Performance', social:'Social',    fatigue:'Brain fatigue', physical_tired:'Physical tired', down:'Low mood', anxiety:'Anxiety', poor_sleep:'Poor sleep' };  return map[s] || (s.charAt(0).toUpperCase() + s.slice(1));}function openModal(key) {  const d = DB[key]; if (!d) return;  const rows = Object.entries(d.details).map(([k,v]) =>    `<tr><td>${k}</td><td>${v}</td></tr>`).join('');  document.getElementById('modal').innerHTML = `    <div class="mov" id="mov" onclick="if(event.target===this)closeModal()">      <div class="mbox">        <div class="mhandle"></div>        <div class="mname">${d.name}</div>        <div class="mtiming">${d.timing}</div>        <table class="mtable"><tbody>${rows}</tbody></table>        <button class="closebtn" onclick="closeModal()">Dismiss</button>      </div>    </div>`;}function closeModal() { document.getElementById('modal').innerHTML=''; }// ── Event wiring ─────────────────────────────────────────────────────────────
+ 
+// Helper: single-select within a container
+function bindSingle(containerId, stateKey, onSelect) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.querySelectorAll('.chip').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      container.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('on'); });
+      btn.classList.add('on');
+      S[stateKey] = btn.dataset.v;
+      if (onSelect) onSelect(btn.dataset.v);
+    });
   });
+}
+ 
+// Helper: multi-select within a container
+function bindMulti(containerId, stateSet) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.querySelectorAll('.chip').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var v = btn.dataset.v;
+      if (stateSet.has(v)) {
+        stateSet.delete(v);
+        btn.classList.remove('on');
+      } else {
+        stateSet.add(v);
+        btn.classList.add('on');
+      }
+    });
+  });
+}
+ 
+bindSingle('add-row', 'add', function(v) {
+  var ds = document.getElementById('dose-sec');
+  ds.style.opacity = v === 'yes' ? '1' : '0.28';
+  ds.style.pointerEvents = v === 'yes' ? '' : 'none';
 });
-document.getElementById('gen-btn').addEventListener('click', function() { doGenerate(); });document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
+bindSingle('dose-row', 'dose', null);
+bindSingle('mode-row', 'mode', null);
+bindMulti('act-row', S.acts);
+bindMulti('feel-row', S.feels);
+bindSingle('score-row', 'score', null);
+ 
+document.getElementById('explorer-cb').addEventListener('change', function(e) {
+  document.getElementById('explorer-row').classList.toggle('active', e.target.checked);
+});
+document.getElementById('gen-btn').addEventListener('click', function() { doGenerate(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
 loadLog();</script></body></html>
+ 
