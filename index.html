@@ -1,200 +1,1613 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Supplement Stack v1.4</title><link rel="preconnect" href="https://fonts.googleapis.com"/><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}:root{  --bg:#0e0e0f;--surface:#161618;--surface2:#1e1e21;  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);  --text:#f0efe8;--muted:#888785;--hint:#4a4a48;  --accent:#c8f065;--accent-dim:rgba(200,240,101,0.11);--accent-text:#0e0e0f;  --info:#5b9cf6;--info-dim:rgba(91,156,246,0.12);  --warn:#f6a85b;--warn-dim:rgba(246,168,91,0.12);  --danger:#f65b5b;--danger-dim:rgba(246,91,91,0.1);  --r:8px;--rl:13px;  --mono:'DM Mono',monospace;--sans:'DM Sans',system-ui,sans-serif;}body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}.app{max-width:560px;margin:0 auto;padding:2.5rem 1.25rem 6rem}.header{margin-bottom:2rem}.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:.35rem}.header h1{font-size:22px;font-weight:500;letter-spacing:-.02em}.header p{font-size:13px;color:var(--muted);margin-top:.2rem}.section{margin-bottom:1.5rem}.slabel{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--hint);text-transform:uppercase;margin-bottom:.55rem}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:6px 14px;font-size:13px;font-family:var(--sans);border:1px solid var(--border2);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer;transition:all .14s;user-select:none;white-space:nowrap}.chip:hover{border-color:rgba(255,255,255,.22);color:var(--text)}.chip.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:500}.chip[disabled]{opacity:.28;pointer-events:none}.group-divider{margin:1.25rem 0 1rem;display:flex;align-items:center;gap:10px}.group-divider span{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--hint);text-transform:uppercase;white-space:nowrap}.group-divider::before,.group-divider::after{content:'';flex:1;height:1px;background:var(--border)}.group-divider::before{display:none}.group-divider::after{flex:1}.gen-btn{width:100%;padding:13px;margin-top:.25rem;font-size:14px;font-weight:500;font-family:var(--sans);background:var(--accent);color:var(--accent-text);border:none;border-radius:var(--r);cursor:pointer;transition:opacity .14s,transform .1s;letter-spacing:.01em}.gen-btn:hover{opacity:.87}.gen-btn:active{transform:scale(.98)}hr{border:none;border-top:1px solid var(--border);margin:2rem 0}.day-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:var(--r);font-family:var(--mono);font-size:12px;margin-bottom:1.25rem}.day-badge.hadd{background:var(--info-dim);color:var(--info);border:1px solid rgba(91,156,246,.22)}.day-badge.noadd{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}.dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}.orphan-banner{padding:10px 14px;border-radius:var(--r);background:var(--warn-dim);border:1px solid rgba(246,168,91,.25);font-size:13px;color:var(--warn);margin-bottom:1rem;line-height:1.5}.orphan-banner strong{font-weight:500}.ghead{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--hint);text-transform:uppercase;padding:.9rem 0 .35rem}.stack-list{display:flex;flex-direction:column;gap:4px}.sitem{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .14s,background .14s}.sitem:hover{border-color:var(--border2);background:var(--surface2)}.il{display:flex;align-items:center;gap:10px}.ibar{width:3px;height:26px;border-radius:2px;flex-shrink:0}.iname{font-size:14px;font-weight:400}.itiming{font-size:11px;color:var(--hint);margin-top:1px;font-family:var(--mono)}.ir{display:flex;align-items:center;gap:9px}.iserving{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}.chev{color:var(--hint);font-size:15px;line-height:1}.sfooter{margin-top:.75rem;font-family:var(--mono);font-size:11px;color:var(--hint);text-align:right}
-/* ── v1.1 additions ─────────────────────────────────── */
-.explorer-row{margin:.35rem 0 1rem}.explorer-label{display:flex;align-items:center;gap:11px;cursor:pointer;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--muted);transition:border-color .14s,background .14s,color .14s}.explorer-label:hover{border-color:var(--border2)}.explorer-label input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}.explorer-label em{font-style:normal;color:var(--hint);font-size:12px}.explorer-row.active .explorer-label{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}.explorer-row.active .explorer-label em{color:var(--accent);opacity:.8}.log-actions{margin-top:9px;display:flex;gap:8px;flex-wrap:wrap}.log-actions button{font-family:var(--mono);font-size:11px;padding:5px 11px;border-radius:6px;background:transparent;border:1px solid currentColor;color:inherit;cursor:pointer;opacity:.8;transition:opacity .14s}.log-actions button:hover{opacity:1}
-/* Modal */.mov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fi .15s ease}@keyframes fi{from{opacity:0}to{opacity:1}}.mbox{background:var(--surface);border:1px solid var(--border2);border-bottom:none;border-radius:var(--rl) var(--rl) 0 0;padding:1.4rem 1.25rem 2.25rem;width:100%;max-width:560px;max-height:82vh;overflow-y:auto;animation:su .18s ease}@keyframes su{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}.mhandle{width:34px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.2rem}.mname{font-size:17px;font-weight:500;margin-bottom:.15rem}.mtiming{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:1.2rem}.mtable{width:100%;border-collapse:collapse;margin-bottom:.75rem}.mtable tr{border-bottom:1px solid var(--border)}.mtable tr:last-child{border-bottom:none}.mtable td{padding:9px 0;font-size:13px;vertical-align:top}.mtable td:first-child{color:var(--muted);width:36%;font-family:var(--mono);font-size:11px;padding-right:12px;padding-top:11px}.closebtn{width:100%;padding:10px;font-size:13px;font-family:var(--sans);background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .14s;margin-top:.5rem}.closebtn:hover{border-color:var(--border2)}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}</style></head><body><div class="app">  <div class="header">    <div class="eyebrow">Stack protocol · v1.4</div>    <h1>Today's supplements</h1>    <p>Pick your mode, select any active modifiers, then generate.</p><p id="sync-status" style="font-size:11px;color:var(--hint);margin-top:.4rem;font-family:var(--mono)">&#8203;</p>  </div>  <!-- Adderall -->  <div class="section">    <div class="slabel">Adderall today?</div>    <div class="chips" id="add-row">      <button class="chip on" data-g="add" data-v="yes">Yes</button>      <button class="chip"    data-g="add" data-v="no">No</button>    </div>  </div>  <!-- Dose -->  <div class="section" id="dose-sec">    <div class="slabel">Dose</div>    <div class="chips" id="dose-row">      <button class="chip"    data-g="dose" data-v="10">10 mg — light / relax</button>      <button class="chip on" data-g="dose" data-v="15">15 mg — default</button>      <button class="chip"    data-g="dose" data-v="20">20 mg — high output</button>    </div>  </div>  <!-- Primary mode -->  <div class="section">    <div class="slabel">Primary focus mode — pick one</div>    <div class="chips" id="mode-row">      <button class="chip on" data-g="mode" data-v="sharp">Sharp</button>      <button class="chip"    data-g="mode" data-v="focus">Focus</button>      <button class="chip"    data-g="mode" data-v="relax">Relax</button>    </div>  </div>  <!-- Activity modifiers -->  <div class="section">    <div class="slabel">Activity modifiers — multi-select or skip</div>    <div class="chips" id="act-row">      <button class="chip" data-g="act" data-v="workout">Workout</button>      <button class="chip" data-g="act" data-v="performance">Performance</button>      <button class="chip" data-g="act" data-v="social">Social</button>    </div>  </div>  <!-- Feeling modifiers -->  <div class="section">    <div class="slabel">Feeling modifiers — multi-select or skip</div>    <div class="chips" id="feel-row">      <button class="chip" data-g="feel" data-v="fatigue">Brain fatigue</button>      <button class="chip" data-g="feel" data-v="physical_tired">Physical tired</button>      <button class="chip" data-g="feel" data-v="down">Low mood</button>      <button class="chip" data-g="feel" data-v="anxiety">Anxiety</button>      <button class="chip" data-g="feel" data-v="poor_sleep">Poor sleep</button>    </div>  </div>  <!-- As-needed extras -->  <div class="section">    <div class="slabel">As needed — multi-select or skip</div>    <div class="chips" id="extra-row">      <button class="chip" data-g="extra" data-v="prostate">Prostate Support</button>      <button class="chip" data-g="extra" data-v="testosterone">Testosterone Support</button>    </div>  </div>  <!-- Yesterday Feeling Score -->
-  <div class="section">
-    <div class="slabel">Yesterday feeling score</div>
-    <div class="chips" id="score-row">
-      <button class="chip" data-g="score" data-v="1">1 &mdash; Rough</button>
-      <button class="chip" data-g="score" data-v="2">2 &mdash; Below avg</button>
-      <button class="chip" data-g="score" data-v="3">3 &mdash; OK</button>
-      <button class="chip" data-g="score" data-v="4">4 &mdash; Good</button>
-      <button class="chip" data-g="score" data-v="5">5 &mdash; Great</button>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Supplement Stack v1.4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/><style>
+      *,*::before,*::after {
+        box-sizing:border-box;
+        margin:0;
+        padding:0
+      }
+
+      :root {
+        --bg:#0e0e0f;
+        --surface:#161618;
+        --surface2:#1e1e21;
+        --border:rgba(255,255,255,0.07);
+        --border2:rgba(255,255,255,0.14);
+        --text:#f0efe8;
+        --muted:#888785;
+        --hint:#4a4a48;
+        --accent:#c8f065;
+        --accent-dim:rgba(200,240,101,0.11);
+        --accent-text:#0e0e0f;
+        --info:#5b9cf6;
+        --info-dim:rgba(91,156,246,0.12);
+        --warn:#f6a85b;
+        --warn-dim:rgba(246,168,91,0.12);
+        --danger:#f65b5b;
+        --danger-dim:rgba(246,91,91,0.1);
+        --r:8px;
+        --rl:13px;
+        --mono:'DM Mono',monospace;
+        --sans:'DM Sans',system-ui,sans-serif;
+      }
+
+      body {
+        font-family:var(--sans);
+        background:var(--bg);
+        color:var(--text);
+        min-height:100vh;
+        -webkit-font-smoothing:antialiased
+      }
+
+      .app {
+        max-width:560px;
+        margin:0 auto;
+        padding:2.5rem 1.25rem 6rem
+      }
+
+      .header {
+        margin-bottom:2rem
+      }
+
+      .eyebrow {
+        font-family:var(--mono);
+        font-size:11px;
+        letter-spacing:.12em;
+        color:var(--accent);
+        text-transform:uppercase;
+        margin-bottom:.35rem
+      }
+
+      .header h1 {
+        font-size:22px;
+        font-weight:500;
+        letter-spacing:-.02em
+      }
+
+      .header p {
+        font-size:13px;
+        color:var(--muted);
+        margin-top:.2rem
+      }
+
+      .section {
+        margin-bottom:1.5rem
+      }
+
+      .slabel {
+        font-family:var(--mono);
+        font-size:10px;
+        letter-spacing:.1em;
+        color:var(--hint);
+        text-transform:uppercase;
+        margin-bottom:.55rem
+      }
+
+      .chips {
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px
+      }
+
+      .chip {
+        padding:6px 14px;
+        font-size:13px;
+        font-family:var(--sans);
+        border:1px solid var(--border2);
+        border-radius:999px;
+        background:var(--surface);
+        color:var(--muted);
+        cursor:pointer;
+        transition:all .14s;
+        user-select:none;
+        white-space:nowrap
+      }
+
+      .chip:hover {
+        border-color:rgba(255,255,255,.22);
+        color:var(--text)
+      }
+
+      .chip.on {
+        background:var(--accent-dim);
+        border-color:var(--accent);
+        color:var(--accent);
+        font-weight:500
+      }
+
+      .chip[disabled] {
+        opacity:.28;
+        pointer-events:none
+      }
+
+      .group-divider {
+        margin:1.25rem 0 1rem;
+        display:flex;
+        align-items:center;
+        gap:10px
+      }
+
+      .group-divider span {
+        font-family:var(--mono);
+        font-size:10px;
+        letter-spacing:.09em;
+        color:var(--hint);
+        text-transform:uppercase;
+        white-space:nowrap
+      }
+
+      .group-divider::before,.group-divider::after {
+        content:'';
+        flex:1;
+        height:1px;
+        background:var(--border)
+      }
+
+      .group-divider::before {
+        display:none
+      }
+
+      .group-divider::after {
+        flex:1
+      }
+
+      .gen-btn {
+        width:100%;
+        padding:13px;
+        margin-top:.25rem;
+        font-size:14px;
+        font-weight:500;
+        font-family:var(--sans);
+        background:var(--accent);
+        color:var(--accent-text);
+        border:none;
+        border-radius:var(--r);
+        cursor:pointer;
+        transition:opacity .14s,transform .1s;
+        letter-spacing:.01em
+      }
+
+      .gen-btn:hover {
+        opacity:.87
+      }
+
+      .gen-btn:active {
+        transform:scale(.98)
+      }
+
+      hr {
+        border:none;
+        border-top:1px solid var(--border);
+        margin:2rem 0
+      }
+
+      .day-badge {
+        display:inline-flex;
+        align-items:center;
+        gap:7px;
+        padding:6px 12px;
+        border-radius:var(--r);
+        font-family:var(--mono);
+        font-size:12px;
+        margin-bottom:1.25rem
+      }
+
+      .day-badge.hadd {
+        background:var(--info-dim);
+        color:var(--info);
+        border:1px solid rgba(91,156,246,.22)
+      }
+
+      .day-badge.noadd {
+        background:var(--surface2);
+        color:var(--muted);
+        border:1px solid var(--border)
+      }
+
+      .dot {
+        width:6px;
+        height:6px;
+        border-radius:50%;
+        background:currentColor;
+        flex-shrink:0
+      }
+
+      .orphan-banner {
+        padding:10px 14px;
+        border-radius:var(--r);
+        background:var(--warn-dim);
+        border:1px solid rgba(246,168,91,.25);
+        font-size:13px;
+        color:var(--warn);
+        margin-bottom:1rem;
+        line-height:1.5
+      }
+
+      .orphan-banner strong {
+        font-weight:500
+      }
+
+      .ghead {
+        font-family:var(--mono);
+        font-size:10px;
+        letter-spacing:.09em;
+        color:var(--hint);
+        text-transform:uppercase;
+        padding:.9rem 0 .35rem
+      }
+
+      .stack-list {
+        display:flex;
+        flex-direction:column;
+        gap:4px
+      }
+
+      .sitem {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:10px 13px;
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:var(--r);
+        cursor:pointer;
+        transition:border-color .14s,background .14s
+      }
+
+      .sitem:hover {
+        border-color:var(--border2);
+        background:var(--surface2)
+      }
+
+      .il {
+        display:flex;
+        align-items:center;
+        gap:10px
+      }
+
+      .ibar {
+        width:3px;
+        height:26px;
+        border-radius:2px;
+        flex-shrink:0
+      }
+
+      .iname {
+        font-size:14px;
+        font-weight:400
+      }
+
+      .itiming {
+        font-size:11px;
+        color:var(--hint);
+        margin-top:1px;
+        font-family:var(--mono)
+      }
+
+      .ir {
+        display:flex;
+        align-items:center;
+        gap:9px
+      }
+
+      .iserving {
+        font-family:var(--mono);
+        font-size:12px;
+        color:var(--muted);
+        white-space:nowrap
+      }
+
+      .chev {
+        color:var(--hint);
+        font-size:15px;
+        line-height:1
+      }
+
+      .sfooter {
+        margin-top:.75rem;
+        font-family:var(--mono);
+        font-size:11px;
+        color:var(--hint);
+        text-align:right
+      }
+
+      /* ── v1.1 additions ─────────────────────────────────── */
+      .explorer-row {
+        margin:.35rem 0 1rem
+      }
+
+      .explorer-label {
+        display:flex;
+        align-items:center;
+        gap:11px;
+        cursor:pointer;
+        padding:11px 13px;
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:var(--r);
+        font-size:13px;
+        color:var(--muted);
+        transition:border-color .14s,background .14s,color .14s
+      }
+
+      .explorer-label:hover {
+        border-color:var(--border2)
+      }
+
+      .explorer-label input {
+        width:16px;
+        height:16px;
+        accent-color:var(--accent);
+        cursor:pointer;
+        flex-shrink:0
+      }
+
+      .explorer-label em {
+        font-style:normal;
+        color:var(--hint);
+        font-size:12px
+      }
+
+      .explorer-row.active .explorer-label {
+        border-color:var(--accent);
+        background:var(--accent-dim);
+        color:var(--accent)
+      }
+
+      .explorer-row.active .explorer-label em {
+        color:var(--accent);
+        opacity:.8
+      }
+
+      .log-actions {
+        margin-top:9px;
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap
+      }
+
+      .log-actions button {
+        font-family:var(--mono);
+        font-size:11px;
+        padding:5px 11px;
+        border-radius:6px;
+        background:transparent;
+        border:1px solid currentColor;
+        color:inherit;
+        cursor:pointer;
+        opacity:.8;
+        transition:opacity .14s
+      }
+
+      .log-actions button:hover {
+        opacity:1
+      }
+
+      /* Modal */.mov {
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.65);
+        z-index:200;
+        display:flex;
+        align-items:flex-end;
+        justify-content:center;
+        animation:fi .15s ease
+      }
+
+      @keyframes fi {
+        from {
+        opacity:0
+      }
+
+      to {
+        opacity:1
+      }
+
+      }
+
+      .mbox {
+        background:var(--surface);
+        border:1px solid var(--border2);
+        border-bottom:none;
+        border-radius:var(--rl) var(--rl) 0 0;
+        padding:1.4rem 1.25rem 2.25rem;
+        width:100%;
+        max-width:560px;
+        max-height:82vh;
+        overflow-y:auto;
+        animation:su .18s ease
+      }
+
+      @keyframes su {
+        from {
+        transform:translateY(18px);
+        opacity:0
+      }
+
+      to {
+        transform:translateY(0);
+        opacity:1
+      }
+
+      }
+
+      .mhandle {
+        width:34px;
+        height:4px;
+        background:var(--border2);
+        border-radius:2px;
+        margin:0 auto 1.2rem
+      }
+
+      .mname {
+        font-size:17px;
+        font-weight:500;
+        margin-bottom:.15rem
+      }
+
+      .mtiming {
+        font-family:var(--mono);
+        font-size:11px;
+        color:var(--muted);
+        margin-bottom:1.2rem
+      }
+
+      .mtable {
+        width:100%;
+        border-collapse:collapse;
+        margin-bottom:.75rem
+      }
+
+      .mtable tr {
+        border-bottom:1px solid var(--border)
+      }
+
+      .mtable tr:last-child {
+        border-bottom:none
+      }
+
+      .mtable td {
+        padding:9px 0;
+        font-size:13px;
+        vertical-align:top
+      }
+
+      .mtable td:first-child {
+        color:var(--muted);
+        width:36%;
+        font-family:var(--mono);
+        font-size:11px;
+        padding-right:12px;
+        padding-top:11px
+      }
+
+      .closebtn {
+        width:100%;
+        padding:10px;
+        font-size:13px;
+        font-family:var(--sans);
+        background:var(--surface2);
+        color:var(--muted);
+        border:1px solid var(--border);
+        border-radius:var(--r);
+        cursor:pointer;
+        transition:border-color .14s;
+        margin-top:.5rem
+      }
+
+      .closebtn:hover {
+        border-color:var(--border2)
+      }
+
+      ::-webkit-scrollbar {
+        width:4px
+      }
+
+      ::-webkit-scrollbar-track {
+        background:transparent
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background:var(--border2);
+        border-radius:2px
+      }
+    </style></head>
+    <body>
+      <div class="app">
+        <div class="header">
+          <div class="eyebrow">Stack protocol · v1.5</div>
+          <h1>Today's supplements</h1>
+          <p>Pick your mode, select any active modifiers, then generate.</p>
+          <p id="sync-status" style="font-size:11px;color:var(--hint);margin-top:.4rem;font-family:var(--mono)">&#8203;</p>
+        </div>
+        <!-- Adderall -->
+        <div class="section">
+          <div class="slabel">Adderall today?</div>
+          <div class="chips" id="add-row">
+            <button class="chip on" data-g="add" data-v="yes">Yes</button>
+            <button class="chip"    data-g="add" data-v="no">No</button>
+          </div>
+        </div>
+        <!-- Dose -->
+        <div class="section" id="dose-sec">
+          <div class="slabel">Dose</div>
+          <div class="chips" id="dose-row">
+            <button class="chip"    data-g="dose" data-v="10">10 mg — light / relax</button>
+            <button class="chip on" data-g="dose" data-v="15">15 mg — default</button>
+            <button class="chip"    data-g="dose" data-v="20">20 mg — high output</button>
+          </div>
+        </div>
+        <!-- Primary mode -->
+        <div class="section">
+          <div class="slabel">Primary focus mode — pick one</div>
+          <div class="chips" id="mode-row">
+            <button class="chip on" data-g="mode" data-v="sharp">Sharp</button>
+            <button class="chip"    data-g="mode" data-v="focus">Focus</button>
+            <button class="chip"    data-g="mode" data-v="relax">Relax</button>
+          </div>
+        </div>
+        <!-- Activity modifiers -->
+        <div class="section">
+          <div class="slabel">Activity modifiers — multi-select or skip</div>
+          <div class="chips" id="act-row">
+            <button class="chip" data-g="act" data-v="workout">Workout</button>
+            <button class="chip" data-g="act" data-v="performance">Performance</button>
+            <button class="chip" data-g="act" data-v="social">Social</button>
+          </div>
+        </div>
+        <!-- Feeling modifiers -->
+        <div class="section">
+          <div class="slabel">Feeling modifiers — multi-select or skip</div>
+          <div class="chips" id="feel-row">
+            <button class="chip" data-g="feel" data-v="fatigue">Brain fatigue</button>
+            <button class="chip" data-g="feel" data-v="physical_tired">Physical tired</button>
+            <button class="chip" data-g="feel" data-v="down">Low mood</button>
+            <button class="chip" data-g="feel" data-v="anxiety">Anxiety</button>
+            <button class="chip" data-g="feel" data-v="poor_sleep">Poor sleep</button>
+          </div>
+        </div>
+        <!-- Yesterday Feeling Score -->
+        <div class="section">
+          <div class="slabel">Yesterday feeling score</div>
+          <div class="chips" id="score-row">
+            <button class="chip" data-g="score" data-v="1">1 &mdash; Rough</button>
+            <button class="chip" data-g="score" data-v="2">2 &mdash; Below avg</button>
+            <button class="chip" data-g="score" data-v="3">3 &mdash; OK</button>
+            <button class="chip" data-g="score" data-v="4">4 &mdash; Good</button>
+            <button class="chip" data-g="score" data-v="5">5 &mdash; Great</button>
+          </div>
+        </div>
+        <!-- Explorer-only checkbox (v1.1) -->
+        <div class="explorer-row" id="explorer-row">
+          <label class="explorer-label">
+          <input type="checkbox" id="explorer-cb"/>
+          <span>Explorer only <em>— preview without saving today to the cloud log (nothing is recorded)</em>
+        </span>
+      </label>
+    </div>
+    <button class="gen-btn" id="gen-btn">Generate today's stack</button>
+    <div id="output">
     </div>
   </div>
-  <!-- Explorer-only checkbox (v1.1) -->  <div class="explorer-row" id="explorer-row">    <label class="explorer-label">      <input type="checkbox" id="explorer-cb"/>      <span>Explorer only <em>— preview without saving today to the cloud log (nothing is recorded)</em></span>    </label>  </div>  <button class="gen-btn" id="gen-btn">Generate today's stack</button>  <div id="output"></div></div><div id="modal"></div><script>
-// ── State ──────────────────────────────────────────────────────────────────
-const S = { add:'yes', dose:'15', mode:'sharp', acts:new Set(), feels:new Set(), extras:new Set(), score:null };
-let _saveError = null;let logMsg = ''; // transient message about today's logging, set by doGenerate / manual overrides// ── Alternate-day persistence (v1.1) ────────────────────────────────────────// Data stored in GitHub Gist for cross-device sync.
-// ── Supabase config — fill in your project URL and anon key ────────────────
-const SB_URL  = 'https://ufzgcxawnuywogktmamv.supabase.co';   // ← replace
-const SB_ANON = 'sb_publishable_-uCqvpa5ctmuuboGZ3CWiQ_DfPtbO0W';                       // ← replace (anon/public key, safe to expose)
-const SB_HEADS = {
-  'Content-Type': 'application/json',
-  'apikey': SB_ANON,
-  'Authorization': 'Bearer ' + SB_ANON
-};
+  <div id="modal">
+  </div><script>
+      // ── State ──────────────────────────────────────────────────────────────────
+      const S = {
+        add: 'yes',
+        dose: '15',
+        mode: 'sharp',
+        acts: new Set(),
+        feels: new Set(),
+        //extras: new Set(),
+        score: null
+      };
+      let _saveError = null;
+      let logMsg = ''; // transient message about today's logging, set by doGenerate / manual overrides// ── Alternate-day persistence (v1.1) ────────────────────────────────────────// Data stored in GitHub Gist for cross-device sync.
+      // ── Supabase config — fill in your project URL and anon key ────────────────
+      const SB_URL = 'https://ufzgcxawnuywogktmamv.supabase.co'; // ← replace
+      const SB_ANON = 'sb_publishable_-uCqvpa5ctmuuboGZ3CWiQ_DfPtbO0W'; // ← replace (anon/public key, safe to expose)
+      const SB_HEADS = {
+        'Content-Type': 'application/json',
+        'apikey': SB_ANON,
+        'Authorization': 'Bearer ' + SB_ANON
+      };
 
-let _memLog  = {};     // local in-memory cache
-let _sbReady = false;
+      let _memLog = {}; // local in-memory cache
+      let _sbReady = false;
 
-function setSyncStatus(msg, color) {
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.color = color || 'var(--hint)';
-}
+      function setSyncStatus(msg, color) {
+        const el = document.getElementById('sync-status');
+        if (!el) return;
+        el.textContent = msg;
+        el.style.color = color || 'var(--hint)';
+      }
 
-async function sbGet(key) {
-  const r = await fetch(
-    `${SB_URL}/rest/v1/stack_log?key=eq.${encodeURIComponent(key)}&select=value`,
-    { headers: SB_HEADS }
-  );
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const rows = await r.json();
-  return rows.length ? rows[0].value : null;
-}
+      async function sbGet(key) {
+        const r = await fetch(
+          `${SB_URL}/rest/v1/stack_log?key=eq.${encodeURIComponent(key)}&select=value`, {
+            headers: SB_HEADS
+          }
+        );
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const rows = await r.json();
+        return rows.length ? rows[0].value : null;
+      }
 
-async function sbUpsert(key, value) {
-  const r = await fetch(`${SB_URL}/rest/v1/stack_log`, {
+      async function sbUpsert(key, value) {
+        const r = await fetch(`${SB_URL}/rest/v1/stack_log`, {
+          method: 'POST',
+          headers: {
+            ...SB_HEADS,
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify({
+            key,
+            value,
+            updated_at: new Date().toISOString()
+          })
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+      }
+
+      async function sbUpsertDaily(row) {
+  const r = await fetch(`${SB_URL}/rest/v1/stack_daily`, {
     method: 'POST',
     headers: { ...SB_HEADS, 'Prefer': 'resolution=merge-duplicates' },
-    body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+    body: JSON.stringify(row)
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
 }
-
-async function loadLog() {
-  if (_sbReady) return _memLog;
-  setSyncStatus('Loading cloud data…', 'var(--hint)');
-  try {
-    const meta = await sbGet('meta');
-    _memLog = meta ? { ...meta } : {};
-    if (!_memLog.days) _memLog.days = {};
-    _sbReady = true;
-    setSyncStatus('☁️ Synced', 'var(--accent)');
-  } catch(e) {
-    setSyncStatus('⚠️ Offline — cloud unavailable', 'var(--warn)');
-  }
-  return _memLog;
+async function sbPatchDaily(date, patch) {
+  const r = await fetch(`${SB_URL}/rest/v1/stack_daily?date=eq.${date}`, {
+    method: 'PATCH',
+    headers: { ...SB_HEADS, 'Prefer': 'return=representation' },
+    body: JSON.stringify(patch)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json(); // 空数组 ⇒ 那天没行
 }
 
-async function saveLog(log) {
-  _memLog = log;
-  _sbReady = true;
-  try {
-    // meta row: everything except days{}
-    const { days, ...meta } = log;
-    await sbUpsert('meta', meta);
-    // today's daily snapshot as its own row
-    const today = todayStr();
-    if (days && days[today]) {
-      await sbUpsert(today, days[today]);
-    }
-    setSyncStatus('☁️ Saved', 'var(--accent)');
-    _saveError = null;
-  } catch(e) {
-    _saveError = 'Supabase save failed: ' + e.message;
-    setSyncStatus('⚠️ ' + _saveError, 'var(--danger)');
-  }
-}function pad(n){ return String(n).padStart(2,'0'); }function dateToStr(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }function todayStr(){ return dateToStr(new Date()); }function yesterdayStr(){ const d=new Date(); d.setDate(d.getDate()-1); return dateToStr(d); }function daysBetween(a,b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000); }// Prostate Support = alt-day (every other day). Decide if today is an ON day.// ON  -> in today's stack;  OFF -> skipped, returns tomorrow.
-async function prostateStatus(){  const last = (await loadLog()).lastProstateDate;  if(!last) return { on:true, last:null };          // never recorded -> take it  
-const diff = daysBetween(last, todayStr());  if(diff <= 0) return { on:true,  last };           // already taken today -> shown  
-if(diff === 1) return { on:false, last };          // taken yesterday -> off day  
-return { on:true, last };                          // 2+ days ago -> on day
-}// ── Supplement DB ──────────────────────────────────────────────────────────// Colors: green=base, blue=cognitive, purple=dopamine/mood, orange=perf/activity
-const DB = {  GNC_Vitapak:{name:'GNC Vitapak',color:'#639922',timing:'With meal',details:{    Dose:'× 1 pack',    'Key ingredients':'Zinc 18.5 mg · Selenium 55 mcg · L-Theanine 200 mg · Milk Thistle 650 mg · L-Arginine 600 mg · full multi-vitamin',    Note:'Zinc here + Prostate 15 mg + TestoSupport 15 mg = 48.5 mg total on Prostate days — already over 40 mg UL. Zinc standalone never taken.'  }},  B_Complex:{name:'B Complex',color:'#639922',timing:'With meal',details:{    Dose:'× 2 caps',    'Key ingredients':'B1 100 mg · B2 20 mg · Niacin 25 mg · B6 2 mg · B12 15 mcg · Biotin 30 mcg',    Note:'ADHD methylation demand. 2× safe: cumulative B6 ~18 mg, far below 100 mg UL.'  }},  Creatine:{name:'Creatine',color:'#639922',timing:'With meal · daily (timing-insensitive)',details:{    Dose:'2.5 g × 1',    Ingredient:'Creatine Monohydrate 2.5 g',    Note:'Long-term daily base — saturation type, the value is in never skipping (re-saturation takes 3–4 weeks if stopped). 100 kg body could run 3–5 g; 2.5 g is a conservative maintenance dose. Slightly raises serum creatinine (lab artifact, NOT kidney damage); stay hydrated.'  }},  Prostate_Support:{name:'Prostate Support',color:'#639922',timing:'As needed · with meal',details:{    Dose:'× 1 cap (as needed)',    'Key ingredients':'Zinc 15 mg · Selenium 60 mcg · Saw Palmetto · Beta-Sitosterol · Pumpkin Seed Oil · Pygeum',    Note:'As-needed (toggle on when wanted). Space dosing to keep zinc in range — on a day you also take it, total zinc ≈ 48.5 mg (GNC 18.5 + Prostate 15 + Testo 15) which briefly exceeds the 40 mg UL, so avoid stacking it daily. Selenium on such a day: GNC 55 + Prostate 60 + Stasis 200 = 315 mcg (UL 400 mcg).'  }},  Testosterone_Support:{name:'Testosterone Support',color:'#639922',timing:'As needed · with meal',details:{    Dose:'× 1 cap (as needed)',    'Key ingredients':'Rhodiola 400 mg · Zinc 15 mg · Tribulus 750 mg · ALCAR 500 mg · DIM 150 mg · Beta-Ecdysterone 150 mg · Epimedium 100 mg',    Note:'As-needed (no longer daily base). Carries Rhodiola 400 mg + Zinc 15 mg — on a day you take it, count both against daily totals.'  }},  Milk_Thistle:{name:'Milk Thistle',color:'#639922',timing:'With meal',details:{    Dose:'× 1 cap (1300 mg, 50% Silymarin)',    Note:'Liver protection. Mandatory on all Adderall days due to hepatic load. Also in daily base on non-Add days.'  }},  Vitamin_D3:{name:'Vitamin D3',color:'#639922',timing:'With fatty meal',details:{    Dose:'× 1 softgel (5000 IU)',    Note:'Non-Adderall days only. Stasis contains 5000 IU on Add days — stacking = 10,000 IU, above chronic UL.'  }},  Stasis:{name:'Stasis',color:'#185FA5',timing:'With meal',details:{    Dose:'× 1 cap',    'Key ingredients':'D3 5000 IU · E 15 mg · B6 5 mg · B12 1000 mcg · Selenium 200 mcg · Turmeric 200 mg · L-Theanine 200 mg · Ashwagandha (Shoden®) 120 mg · CoQ10 100 mg · Saffron 28 mg · Spermidine 10 mg · Salidroside 30 mg',    Note:'Mandatory on Adderall days. Covers Saffron (28 of 30 mg ceiling), Ashwagandha, Theanine, D3. All standalones of these skipped on Add days.'  }},  Citicoline_1x:{name:'Citicoline',color:'#185FA5',timing:'Morning, any food context',details:{    Dose:'250 mg × 1',    Ingredient:'Cognizin® Citicoline 250 mg',    Note:'Sharp + Adderall: Adderall covers DA/NE fully; 1× Citicoline supplies only ACh precursor needed.'  }},  Citicoline_2x:{name:'Citicoline',color:'#185FA5',timing:'Morning, any food context',details:{    Dose:'250 mg × 2 = 500 mg',    Ingredient:'Cognizin® Citicoline 250 mg per cap',    Evidence:'Silveri et al. 2008 — 500 mg/day for 6 weeks improved cognitive performance, no adverse effects.',    Note:'Focus days and all no-Add days: full ACh + DA precursor support required.'  }},  Alpha_GPC:{name:'Alpha GPC',color:'#185FA5',timing:'Any food context',details:{    Dose:'150 mg × 2 = 300 mg',    Ingredient:'Alpha GPC 150 mg per cap',    Evidence:'300–600 mg/day in clinical trials (De Jesus Moreno Moreno 2003). 300 mg well-tolerated.',    Note:'Paired with Citicoline for dual-pathway cholinergic support.'  }},  Lions_Mane:{name:"Lion's Mane",color:'#185FA5',timing:'Any time',details:{    Dose:'500 mg × 2 = 1000 mg',    Ingredient:"Lion's Mane Extract 500 mg per cap",    Evidence:"Mori et al. 2009 — 1000 mg/day × 16 weeks: significant cognitive improvement, no adverse effects.",    Note:'NGF stimulation. ADHD neural repair demands higher NGF support.'  }},  Bacopa:{name:'Bacopa (Cognance)',color:'#185FA5',timing:'With fatty meal',details:{    Dose:'100 mg × 1',    Ingredient:'Bacopa monnieri Extract 100 mg (Cognance standardized)',    Note:'Fat-soluble — requires dietary fat for absorption. Memory consolidation and neuroprotection.'  }},  Sabroxy:{name:'Sabroxy',color:'#185FA5',timing:'Any time',details:{    Dose:'100 mg × 1',    Ingredient:'Oroxylum indicum Extract 100 mg (10% Oroxylin A = 10 mg active)',    Note:'PDE4 inhibitor and dopamine reuptake modulator. ⚠️ MAO-B activity — on Adderall days confirm with pharmacist (§10). 1 cap is the standard studied dose.'  }},  Fourdma:{name:'4-DMA-7,8-DHF',color:'#185FA5',timing:'With fatty meal',details:{    Dose:'10 mg × 1',    Ingredient:"4'-Dimethylamino-7,8-dihydroxyflavone 10 mg",    Note:'TrkB agonist (BDNF mimetic). Fat-soluble — must take with food. 10 mg is max studied dose; higher shows diminishing returns in animal models. Sharp mode only.'  }},  Rhodiola_SA:{name:'Rhodiola (standalone)',color:'#3B6D11',timing:'Morning, empty stomach preferred',details:{    Dose:'500 mg × 1',    Ingredient:'Rhodiola rosea Extract 500 mg',    'Total today':'TestoSupport 400 mg + standalone 500 mg = 900 mg total',    Note:'No-Add days only. 900 mg/day safe in human trials. Add+Sharp: skipped — TestoSupport 400 mg sufficient; extra 500 mg risks CNS over-stimulation with Adderall.'  }},  Energy_Support_1x:{name:'Energy Support',color:'#3B6D11',timing:'With meal',details:{    Dose:'× 1 cap',    'Key ingredients':'Cordyceps militaris 250 mg · Tribulus 200 mg · Fenugreek 200 mg · Dioscorea 200 mg · Vigna radiata 250 mg',    Note:'Default dose. Cordyceps supports mitochondrial ATP. ADHD commonly shows mitochondrial efficiency deficits.'  }},  Energy_Support_2x:{name:'Energy Support',color:'#3B6D11',timing:'With meal',details:{    Dose:'× 2 caps',    'Key ingredients':'Cordyceps militaris 250 mg · Tribulus 200 mg · Fenugreek 200 mg · Dioscorea 200 mg · Vigna radiata 250 mg',    Note:'High-output dose, used only on Sharp days. 2 caps safe; Tribulus totals remain well within range.'  }},  Red_Ginseng:{name:'Red Ginseng (홍삼)',color:'#3B6D11',timing:'Morning',details:{    Dose:'3000 mg × 1',    Ingredient:'Pure Korean Red Ginseng 3000 mg',    Evidence:'3 g/day is the standard human dose across Korean Ginseng trials for alertness, endurance, and adaptogenic benefit.',    Note:'Sustained output adaptogen. Active in Sharp, Workout, Performance, Social, Fatigue, Physical Tired, and Poor Sleep contexts.'  }},  Beetroot:{name:'Beetroot + Grape Seed',color:'#3B6D11',timing:'30–45 min before session',details:{    Dose:'× 1 serving',    'Key ingredients':'Beet Root Powder 625 mg · NO3-T® Nitrate · Grape Extract 300 mg · Niacin 20 mg · B6 4 mg · B12 50 mcg',    Note:'Nitrate → NO → vasodilation. Peak NO window 30–45 min post-ingestion. Cerebral and muscle blood flow.'  }},  DLPA_2x:{name:'DLPA',color:'#7F77DD',timing:'Fasted — 30 min before first meal',details:{    Dose:'500 mg × 2 = 1000 mg',    Ingredient:'DL-Phenylalanine 500 mg per cap',    Note:'DA/NE/PEA precursor. Fasted for optimal BBB transport. Space ≥30 min from Mucuna to avoid transporter saturation. 1000 mg/day well-documented safe.'  }},  DLPA_1x:{name:'DLPA',color:'#7F77DD',timing:'Fasted — 30 min before first meal',details:{    Dose:'500 mg × 1',    Ingredient:'DL-Phenylalanine 500 mg per cap',    Note:'Focus + Adderall: Adderall covers DA/NE; 500 mg DLPA adds mild PEA uplift without over-stacking.'  }},  Mucuna:{name:'Mucuna',color:'#7F77DD',timing:'Fasted — ≥30 min after DLPA',details:{    Dose:'1000 mg × 1 (≈150 mg L-DOPA)',    Ingredient:'Mucuna Pruriens Extract 1000 mg',    Note:'Direct DA precursor via L-DOPA. Skip entirely on Adderall days (amphetamine + L-DOPA = DA overload risk). On Performance: Tongkat Complex already provides L-DOPA — standalone skipped.'  }},  Saffron:{name:'Saffron',color:'#7F77DD',timing:'Any time',details:{    Dose:'30 mg × 1',    Ingredient:'Crocus sativus Extract 30 mg',    Evidence:"Akhondzadeh et al. — 30 mg/day is the clinical ceiling for mood and appetite regulation.",    Note:'No-Add only. Stasis provides 28 mg on Add days — adding 30 mg standalone would exceed 30 mg/day ceiling.'  }},  Ashwagandha:{name:'Ashwagandha (KSM-66)',color:'#7F77DD',timing:'Evening, with meal',details:{    Dose:'1000 mg × 1 (KSM-66 600 mg + root powder 400 mg)',    Note:'No-Add only. Stasis has Shoden® 120 mg on Add days — stacking KSM-66 1000 mg would excessively suppress arousal. Evening: cortisol reduction + sleep improvement.'  }},  Kanna:{name:'Kanna',color:'#7F77DD',timing:'Sublingual — hold 60–90 sec',details:{    Dose:'50 mg × 1',    Ingredient:'Sceletium tortuosum Extract 50 mg',    Note:'No-Add only: Adderall releases 5-HT; stacking = serotonergic risk. Sublingual for fast onset. PDE4 inhibitor, mood lift, social ease. ≤2–3×/week.'  }},  Qiju_Dihuang:{name:'Qiju Dihuang Wan',color:'#7F77DD',timing:'Morning & evening (×1 each)',details:{    Dose:'× 2 — once morning, once evening',    Note:'TCM liver-kidney yin tonic. Taken morning and evening (×1 each). Supports sleep quality and eye health. Active in Relax mode and Poor Sleep modifier. Mutually exclusive with Red Ginseng — when Qiju is in the stack, Red Ginseng is dropped to avoid stimulating against the recovery/sleep goal.'  }},  Tongkat_Complex:{name:'Tongkat Complex',color:'#D85A30',timing:'With meal',details:{    Dose:'× 1 cap',    'Key ingredients':'Eurycomanone 7 mg · Mucuna 200 mg (15% L-DOPA ≈30 mg) · Epimedium 200 mg (Icariin) · Pregnenolone 2.5 mg · Boron 1.5 mg · Iodine 100 mcg',    Note:'Replaces standalone Mucuna on Performance/Social. L-DOPA 30 mg here is safe; covers DA without double-stacking.'  }},  Maca_2x:{name:'Maca',color:'#D85A30',timing:'With meal',details:{    Dose:'200 mg × 2 = 400 mg',    Ingredient:'Maca Extract 200 mg per cap',    Evidence:'Human trials use up to 3 g/day — 400 mg very conservative and safe.',    Note:'Social mode dose.'  }},  Maca_3x:{name:'Maca',color:'#D85A30',timing:'With meal',details:{    Dose:'200 mg × 3 = 600 mg',    Ingredient:'Maca Extract 200 mg per cap',    Evidence:'Human trials use up to 3 g/day — 600 mg well within range.',    Note:'Performance mode dose (takes priority when both Social + Performance selected).'  }},  Black_Ginger_1x:{name:'Black Ginger',color:'#D85A30',timing:'With fatty meal',details:{    Dose:'200 mg × 1',    Ingredient:'Kaempferia parviflora Extract 200 mg (10% 5,7-DMF = 20 mg active)',    Note:'Workout dose: AMPK activation + blood flow. Fat-soluble.'  }},  Black_Ginger_2x:{name:'Black Ginger',color:'#D85A30',timing:'With fatty meal',details:{    Dose:'200 mg × 2 = 400 mg (40 mg active)',    Ingredient:'Kaempferia parviflora Extract 200 mg per cap',    Note:'Performance dose: optimal PDE5 inhibition range. Fat-soluble. When Workout + Performance both selected, Performance dose (×2) takes priority.'  }},  Am_Ginseng:{name:'American Ginseng (American Ginseng)',color:'#D85A30',timing:'Morning',details:{    Dose:'× 1 serving',    Note:'Calming adaptogen balancing Red Ginseng stimulation in Performance and Social contexts. Promotes alert-calm state.'  }},};// ── Logic ──────────────────────────────────────────────────────────────────
-function getStack(add, mode, acts, feels, extras) {  extras = extras || new Set();  const groups = [];  // ── GROUP 1: Daily base — always (long-term) ─────────────────────────  
-const base = { label:'Daily base', items:[] };  base.items.push({ key:'GNC_Vitapak', serving:'× 1' });  base.items.push({ key:'B_Complex',   serving:'× 2' });  base.items.push({ key:'Creatine',    serving:'2.5 g × 1' });  base.items.push({ key:'Lions_Mane',  serving:'500 mg × 2' });  base.items.push({ key:'Bacopa',      serving:'× 1' });  if (add === 'yes') {    base.items.push({ key:'Stasis',       serving:'× 1' });    base.items.push({ key:'Milk_Thistle', serving:'× 1' });  } else {    base.items.push({ key:'Milk_Thistle', serving:'× 1' });    base.items.push({ key:'Vitamin_D3',   serving:'× 1 (5000 IU)' });  }  groups.push(base);  // ── GROUP 2: Cognitive — Sharp / Focus / Fatigue ───────────────────────  
-const cog = { label:'Cognitive', items:[] };  if (mode === 'sharp') {    cog.items.push({ key: add==='yes' ? 'Citicoline_1x' : 'Citicoline_2x',                     serving: add==='yes' ? '250 mg × 1' : '250 mg × 2' });    cog.items.push({ key:'Alpha_GPC',  serving:'150 mg × 2' });    cog.items.push({ key:'Sabroxy',    serving:'× 1' });    cog.items.push({ key:'Fourdma',    serving:'× 1' });    if (add === 'no') {      cog.items.push({ key:'Rhodiola_SA', serving:'500 mg × 1' });    }  } else if (mode === 'focus') {    cog.items.push({ key:'Citicoline_2x', serving:'250 mg × 2' });    cog.items.push({ key:'Alpha_GPC',     serving:'150 mg × 2' });    cog.items.push({ key:'Sabroxy',       serving:'× 1' });  }  if (feels.has('fatigue') && mode !== 'sharp' && mode !== 'focus') {    if (add === 'no') {      cog.items.push({ key:'Rhodiola_SA', serving:'500 mg × 1' });    }  }  if (cog.items.length) groups.push(cog);  // ── GROUP 3: Dopamine support ─────────────────────────────────────────  
-const da = { label:'Dopamine support', items:[] };  if (add === 'no') {    da.items.push({ key:'DLPA_2x', serving:'500 mg × 2 — fasted' });    if (!acts.has('performance')) {      da.items.push({ key:'Mucuna', serving:'1000 mg × 1 — fasted' });    }  } else {    if (mode === 'focus') {      da.items.push({ key:'DLPA_1x', serving:'500 mg × 1 — fasted' });    }  }  if (da.items.length) groups.push(da);  // ── GROUP 4: Energy & blood flow ─────────────────────────────────────  
-const en = { label:'Energy & blood flow', items:[] };  const wantBeet   = mode==='sharp' || acts.has('workout') || feels.has('physical_tired');  const wantEnergy = mode==='sharp' || acts.has('workout') || acts.has('performance') ||                     feels.has('fatigue') || feels.has('physical_tired');  const wantGins   = mode==='sharp' || acts.has('workout') || acts.has('performance') ||                     acts.has('social') || feels.has('fatigue') ||                     feels.has('physical_tired') || feels.has('poor_sleep');  if (wantBeet)   en.items.push({ key:'Beetroot',       serving:'× 1' });  if (wantEnergy) { if (mode==='sharp') { en.items.push({ key:'Energy_Support_2x', serving:'× 2' }); } else { en.items.push({ key:'Energy_Support_1x', serving:'× 1' }); } }  if (wantGins)   en.items.push({ key:'Red_Ginseng',    serving:'3000 mg × 1' });  if (en.items.length) groups.push(en);  // ── GROUP 5: Performance / Social / Workout ───────────────────────────  
-const perf = { label:'Activity stack', items:[] };  const hasPerf = acts.has('performance');  const hasSoc  = acts.has('social');  const hasWork = acts.has('workout');  if (hasPerf || hasSoc) {    perf.items.push({ key:'Tongkat_Complex', serving:'× 1' });  }  if (hasPerf) {    perf.items.push({ key:'Maca_3x', serving:'200 mg × 3' });  } else if (hasSoc) {    perf.items.push({ key:'Maca_2x', serving:'200 mg × 2' });  }  if (hasPerf) {    perf.items.push({ key:'Black_Ginger_2x', serving:'200 mg × 2' });  } else if (hasWork) {    perf.items.push({ key:'Black_Ginger_1x', serving:'200 mg × 1' });  }  if (hasPerf || hasSoc) {    perf.items.push({ key:'Am_Ginseng', serving:'× 1' });  }  if (hasSoc && add === 'no') {    perf.items.push({ key:'Kanna', serving:'50 mg × 1 — sublingual' });  }  if (perf.items.length) groups.push(perf);  // ── GROUP 6: Mood & recovery ──────────────────────────────────────────  
-const mood = { label:'Mood & recovery', items:[] };  if (mode === 'relax' && add === 'no') {    mood.items.push({ key:'Ashwagandha',   serving:'1000 mg × 1 — evening' });    mood.items.push({ key:'Kanna',         serving:'50 mg × 1 — sublingual' });    mood.items.push({ key:'Saffron',       serving:'30 mg × 1' });    mood.items.push({ key:'Qiju_Dihuang',  serving:'× 2 — AM & PM' });  }  if (feels.has('down') && add === 'no') {    mood.items.push({ key:'Saffron', serving:'30 mg × 1' });    mood.items.push({ key:'Kanna',   serving:'50 mg × 1 — sublingual' });  }  if (feels.has('anxiety') && add === 'no') {    mood.items.push({ key:'Ashwagandha', serving:'1000 mg × 1 — evening' });    mood.items.push({ key:'Kanna',       serving:'50 mg × 1 — sublingual' });    mood.items.push({ key:'Saffron',     serving:'30 mg × 1' });  }  if (feels.has('poor_sleep')) {    mood.items.push({ key:'Qiju_Dihuang', serving:'× 2 — AM & PM' });    if (add === 'no') {      mood.items.push({ key:'Ashwagandha', serving:'1000 mg × 1 — evening' });    }    mood.items.push({ key:'Red_Ginseng', serving:'3000 mg × 1' });  }  if (mood.items.length) groups.push(mood);  // ── GROUP 7: As-needed extras (Prostate / Testosterone) ──────────────  
-const extra = { label:'As needed', items:[] };  if (extras.has('prostate'))     extra.items.push({ key:'Prostate_Support',     serving:'× 1' });  if (extras.has('testosterone')) extra.items.push({ key:'Testosterone_Support', serving:'× 1' });  if (extra.items.length) groups.push(extra);  // ── Qiju ↔ Red Ginseng mutual exclusion (Qiju wins) ─────────────────  
-if (groups.some(g => g.items.some(i => i.key === 'Qiju_Dihuang'))) { groups.forEach(g => { g.items = g.items.filter(i => i.key !== 'Red_Ginseng'); }); }  // ── Global deduplication (keep first occurrence per key) ─────────────  
-const seen = new Set();  return groups.map(g => ({    ...g,    items: g.items.filter(item => {      if (seen.has(item.key)) return false;      seen.add(item.key);      return true;    })  })).filter(g => g.items.length > 0);}// ── Orphan detection ───────────────────────────────────────────────────────
-const AS_NEEDED_KEYS = ['Prostate_Support','Testosterone_Support']; // manually toggled in the As-needed section, not driven by mode
-const ALL_STACKABLE_KEYS = new Set([  'GNC_Vitapak','B_Complex','Creatine','Prostate_Support','Testosterone_Support',  'Milk_Thistle','Vitamin_D3','Stasis',  'Citicoline_1x','Citicoline_2x','Alpha_GPC','Lions_Mane','Bacopa','Sabroxy','Fourdma',  'Rhodiola_SA','Energy_Support_1x','Energy_Support_2x','Red_Ginseng','Beetroot',  'DLPA_2x','DLPA_1x','Mucuna','Saffron','Ashwagandha','Kanna','Qiju_Dihuang',  'Tongkat_Complex','Maca_2x','Maca_3x','Black_Ginger_1x','Black_Ginger_2x','Am_Ginseng']);function findOrphans(usedKeys) {  return [...ALL_STACKABLE_KEYS].filter(k => !usedKeys.has(k));}// ── Generate (handles logging) ──────────────────────────────────────────────
-async function doGenerate(){
+      async function loadLog() {
+        if (_sbReady) return _memLog;
+        setSyncStatus('Loading cloud data…', 'var(--hint)');
+        try {
+          const meta = await sbGet('meta');
+          _memLog = meta ? {
+            ...meta
+          } : {};
+          if (!_memLog.days) _memLog.days = {};
+          _sbReady = true;
+          setSyncStatus('☁️ Synced', 'var(--accent)');
+        } catch (e) {
+          setSyncStatus('⚠️ Offline — cloud unavailable', 'var(--warn)');
+        }
+        return _memLog;
+      }
+
+      async function saveLog(log) {
+        _memLog = log;
+        _sbReady = true;
+        try {
+          // meta row: everything except days{}
+          const {
+            days,
+            ...meta
+          } = log;
+          await sbUpsert('meta', meta);
+
+          setSyncStatus('☁️ Saved', 'var(--accent)');
+          _saveError = null;
+        } catch (e) {
+          _saveError = 'Supabase save failed: ' + e.message;
+          setSyncStatus('⚠️ ' + _saveError, 'var(--danger)');
+        }
+      }
+
+      function pad(n) {
+        return String(n).padStart(2, '0');
+      }
+
+      function dateToStr(d) {
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      }
+
+      function todayStr() {
+        return dateToStr(new Date());
+      }
+
+      function yesterdayStr() {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        return dateToStr(d);
+      }
+
+      function daysBetween(a, b) {
+        return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+      } // Prostate Support = alt-day (every other day). Decide if today is an ON day.// ON  -> in today's stack;  OFF -> skipped, returns tomorrow.
+      async function prostateStatus() {
+        const last = (await loadLog()).lastProstateDate;
+        if (!last) return {
+          on: true,
+          last: null
+        }; // never recorded -> take it
+        const diff = daysBetween(last, todayStr());
+        if (diff <= 0) return {
+          on: true,
+          last
+        }; // already taken today -> shown
+        if (diff === 1) return {
+          on: false,
+          last
+        }; // taken yesterday -> off day
+        return {
+          on: true,
+          last
+        }; // 2+ days ago -> on day
+      } // ── Supplement DB ──────────────────────────────────────────────────────────// Colors: green=base, blue=cognitive, purple=dopamine/mood, orange=perf/activity
+      const DB = {
+        GNC_Vitapak: {
+          name: 'GNC Vitapak',
+          color: '#639922',
+          timing: 'With meal',
+          details: {
+            Dose: '× 1 pack',
+            'Key ingredients': 'Zinc 18.5 mg · Selenium 55 mcg · L-Theanine 200 mg · Milk Thistle 650 mg · L-Arginine 600 mg · full multi-vitamin',
+            Note: 'Zinc here + Prostate 15 mg + TestoSupport 15 mg = 48.5 mg total on Prostate days — already over 40 mg UL. Zinc standalone never taken.'
+          }
+        },
+        B_Complex: {
+          name: 'B Complex',
+          color: '#639922',
+          timing: 'With meal',
+          details: {
+            Dose: '× 2 caps',
+            'Key ingredients': 'B1 100 mg · B2 20 mg · Niacin 25 mg · B6 2 mg · B12 15 mcg · Biotin 30 mcg',
+            Note: 'ADHD methylation demand. 2× safe: cumulative B6 ~18 mg, far below 100 mg UL.'
+          }
+        },
+        Creatine: {
+          name: 'Creatine',
+          color: '#639922',
+          timing: 'With meal · daily (timing-insensitive)',
+          details: {
+            Dose: '2.5 g × 1',
+            Ingredient: 'Creatine Monohydrate 2.5 g',
+            Note: 'Long-term daily base — saturation type, the value is in never skipping (re-saturation takes 3–4 weeks if stopped). 100 kg body could run 3–5 g; 2.5 g is a conservative maintenance dose. Slightly raises serum creatinine (lab artifact, NOT kidney damage); stay hydrated.'
+          }
+        },
+        Prostate_Support: {
+          name: 'Prostate Support',
+          color: '#639922',
+          timing: 'As needed · with meal',
+          details: {
+            Dose: '× 1 cap (as needed)',
+            'Key ingredients': 'Zinc 15 mg · Selenium 60 mcg · Saw Palmetto · Beta-Sitosterol · Pumpkin Seed Oil · Pygeum',
+            Note: 'As-needed (toggle on when wanted). Space dosing to keep zinc in range — on a day you also take it, total zinc ≈ 48.5 mg (GNC 18.5 + Prostate 15 + Testo 15) which briefly exceeds the 40 mg UL, so avoid stacking it daily. Selenium on such a day: GNC 55 + Prostate 60 + Stasis 200 = 315 mcg (UL 400 mcg).'
+          }
+        },
+        Testosterone_Support: {
+          name: 'Testosterone Support',
+          color: '#639922',
+          timing: 'As needed · with meal',
+          details: {
+            Dose: '× 1 cap (as needed)',
+            'Key ingredients': 'Rhodiola 400 mg · Zinc 15 mg · Tribulus 750 mg · ALCAR 500 mg · DIM 150 mg · Beta-Ecdysterone 150 mg · Epimedium 100 mg',
+            Note: 'As-needed (no longer daily base). Carries Rhodiola 400 mg + Zinc 15 mg — on a day you take it, count both against daily totals.'
+          }
+        },
+        Milk_Thistle: {
+          name: 'Milk Thistle',
+          color: '#639922',
+          timing: 'With meal',
+          details: {
+            Dose: '× 1 cap (1300 mg, 50% Silymarin)',
+            Note: 'Liver protection. Mandatory on all Adderall days due to hepatic load. Also in daily base on non-Add days.'
+          }
+        },
+        Vitamin_D3: {
+          name: 'Vitamin D3',
+          color: '#639922',
+          timing: 'With fatty meal',
+          details: {
+            Dose: '× 1 softgel (5000 IU)',
+            Note: 'Non-Adderall days only. Stasis contains 5000 IU on Add days — stacking = 10,000 IU, above chronic UL.'
+          }
+        },
+        Stasis: {
+          name: 'Stasis',
+          color: '#185FA5',
+          timing: 'With meal',
+          details: {
+            Dose: '× 1 cap',
+            'Key ingredients': 'D3 5000 IU · E 15 mg · B6 5 mg · B12 1000 mcg · Selenium 200 mcg · Turmeric 200 mg · L-Theanine 200 mg · Ashwagandha (Shoden®) 120 mg · CoQ10 100 mg · Saffron 28 mg · Spermidine 10 mg · Salidroside 30 mg',
+            Note: 'Mandatory on Adderall days. Covers Saffron (28 of 30 mg ceiling), Ashwagandha, Theanine, D3. All standalones of these skipped on Add days.'
+          }
+        },
+        Citicoline_1x: {
+          name: 'Citicoline',
+          color: '#185FA5',
+          timing: 'Morning, any food context',
+          details: {
+            Dose: '250 mg × 1',
+            Ingredient: 'Cognizin® Citicoline 250 mg',
+            Note: 'Sharp + Adderall: Adderall covers DA/NE fully; 1× Citicoline supplies only ACh precursor needed.'
+          }
+        },
+        Citicoline_2x: {
+          name: 'Citicoline',
+          color: '#185FA5',
+          timing: 'Morning, any food context',
+          details: {
+            Dose: '250 mg × 2 = 500 mg',
+            Ingredient: 'Cognizin® Citicoline 250 mg per cap',
+            Evidence: 'Silveri et al. 2008 — 500 mg/day for 6 weeks improved cognitive performance, no adverse effects.',
+            Note: 'Focus days and all no-Add days: full ACh + DA precursor support required.'
+          }
+        },
+        Alpha_GPC: {
+          name: 'Alpha GPC',
+          color: '#185FA5',
+          timing: 'Any food context',
+          details: {
+            Dose: '150 mg × 2 = 300 mg',
+            Ingredient: 'Alpha GPC 150 mg per cap',
+            Evidence: '300–600 mg/day in clinical trials (De Jesus Moreno Moreno 2003). 300 mg well-tolerated.',
+            Note: 'Paired with Citicoline for dual-pathway cholinergic support.'
+          }
+        },
+        Lions_Mane: {
+          name: "Lion's Mane",
+          color: '#185FA5',
+          timing: 'Any time',
+          details: {
+            Dose: '500 mg × 2 = 1000 mg',
+            Ingredient: "Lion's Mane Extract 500 mg per cap",
+            Evidence: "Mori et al. 2009 — 1000 mg/day × 16 weeks: significant cognitive improvement, no adverse effects.",
+            Note: 'NGF stimulation. ADHD neural repair demands higher NGF support.'
+          }
+        },
+        Bacopa: {
+          name: 'Bacopa (Cognance)',
+          color: '#185FA5',
+          timing: 'With fatty meal',
+          details: {
+            Dose: '100 mg × 1',
+            Ingredient: 'Bacopa monnieri Extract 100 mg (Cognance standardized)',
+            Note: 'Fat-soluble — requires dietary fat for absorption. Memory consolidation and neuroprotection.'
+          }
+        },
+        Sabroxy: {
+          name: 'Sabroxy',
+          color: '#185FA5',
+          timing: 'Any time',
+          details: {
+            Dose: '100 mg × 1',
+            Ingredient: 'Oroxylum indicum Extract 100 mg (10% Oroxylin A = 10 mg active)',
+            Note: 'PDE4 inhibitor and dopamine reuptake modulator. ⚠️ MAO-B activity — on Adderall days confirm with pharmacist (§10). 1 cap is the standard studied dose.'
+          }
+        },
+        Fourdma: {
+          name: '4-DMA-7,8-DHF',
+          color: '#185FA5',
+          timing: 'With fatty meal',
+          details: {
+            Dose: '10 mg × 1',
+            Ingredient: "4'-Dimethylamino-7,8-dihydroxyflavone 10 mg",
+            Note: 'TrkB agonist (BDNF mimetic). Fat-soluble — must take with food. 10 mg is max studied dose; higher shows diminishing returns in animal models. Sharp mode only.'
+          }
+        },
+        Rhodiola_SA: {
+          name: 'Rhodiola (standalone)',
+          color: '#3B6D11',
+          timing: 'Morning, empty stomach preferred',
+          details: {
+            Dose: '500 mg × 1',
+            Ingredient: 'Rhodiola rosea Extract 500 mg',
+            'Total today': 'TestoSupport 400 mg + standalone 500 mg = 900 mg total',
+            Note: 'No-Add days only. 900 mg/day safe in human trials. Add+Sharp: skipped — TestoSupport 400 mg sufficient; extra 500 mg risks CNS over-stimulation with Adderall.'
+          }
+        },
+        Energy_Support_1x: {
+          name: 'Energy Support',
+          color: '#3B6D11',
+          timing: 'With meal',
+          details: {
+            Dose: '× 1 cap',
+            'Key ingredients': 'Cordyceps militaris 250 mg · Tribulus 200 mg · Fenugreek 200 mg · Dioscorea 200 mg · Vigna radiata 250 mg',
+            Note: 'Default dose. Cordyceps supports mitochondrial ATP. ADHD commonly shows mitochondrial efficiency deficits.'
+          }
+        },
+        Energy_Support_2x: {
+          name: 'Energy Support',
+          color: '#3B6D11',
+          timing: 'With meal',
+          details: {
+            Dose: '× 2 caps',
+            'Key ingredients': 'Cordyceps militaris 250 mg · Tribulus 200 mg · Fenugreek 200 mg · Dioscorea 200 mg · Vigna radiata 250 mg',
+            Note: 'High-output dose, used only on Sharp days. 2 caps safe; Tribulus totals remain well within range.'
+          }
+        },
+        Red_Ginseng: {
+          name: 'Red Ginseng (홍삼)',
+          color: '#3B6D11',
+          timing: 'Morning',
+          details: {
+            Dose: '3000 mg × 1',
+            Ingredient: 'Pure Korean Red Ginseng 3000 mg',
+            Evidence: '3 g/day is the standard human dose across Korean Ginseng trials for alertness, endurance, and adaptogenic benefit.',
+            Note: 'Sustained output adaptogen. Active in Sharp, Workout, Performance, Social, Fatigue, Physical Tired, and Poor Sleep contexts.'
+          }
+        },
+        Beetroot: {
+          name: 'Beetroot + Grape Seed',
+          color: '#3B6D11',
+          timing: '30–45 min before session',
+          details: {
+            Dose: '× 1 serving',
+            'Key ingredients': 'Beet Root Powder 625 mg · NO3-T® Nitrate · Grape Extract 300 mg · Niacin 20 mg · B6 4 mg · B12 50 mcg',
+            Note: 'Nitrate → NO → vasodilation. Peak NO window 30–45 min post-ingestion. Cerebral and muscle blood flow.'
+          }
+        },
+        DLPA_2x: {
+          name: 'DLPA',
+          color: '#7F77DD',
+          timing: 'Fasted — 30 min before first meal',
+          details: {
+            Dose: '500 mg × 2 = 1000 mg',
+            Ingredient: 'DL-Phenylalanine 500 mg per cap',
+            Note: 'DA/NE/PEA precursor. Fasted for optimal BBB transport. Space ≥30 min from Mucuna to avoid transporter saturation. 1000 mg/day well-documented safe.'
+          }
+        },
+        DLPA_1x: {
+          name: 'DLPA',
+          color: '#7F77DD',
+          timing: 'Fasted — 30 min before first meal',
+          details: {
+            Dose: '500 mg × 1',
+            Ingredient: 'DL-Phenylalanine 500 mg per cap',
+            Note: 'Focus + Adderall: Adderall covers DA/NE; 500 mg DLPA adds mild PEA uplift without over-stacking.'
+          }
+        },
+        Mucuna: {
+          name: 'Mucuna',
+          color: '#7F77DD',
+          timing: 'Fasted — ≥30 min after DLPA',
+          details: {
+            Dose: '1000 mg × 1 (≈150 mg L-DOPA)',
+            Ingredient: 'Mucuna Pruriens Extract 1000 mg',
+            Note: 'Direct DA precursor via L-DOPA. Skip entirely on Adderall days (amphetamine + L-DOPA = DA overload risk). On Performance: Tongkat Complex already provides L-DOPA — standalone skipped.'
+          }
+        },
+        Saffron: {
+          name: 'Saffron',
+          color: '#7F77DD',
+          timing: 'Any time',
+          details: {
+            Dose: '30 mg × 1',
+            Ingredient: 'Crocus sativus Extract 30 mg',
+            Evidence: "Akhondzadeh et al. — 30 mg/day is the clinical ceiling for mood and appetite regulation.",
+            Note: 'No-Add only. Stasis provides 28 mg on Add days — adding 30 mg standalone would exceed 30 mg/day ceiling.'
+          }
+        },
+        Ashwagandha: {
+          name: 'Ashwagandha (KSM-66)',
+          color: '#7F77DD',
+          timing: 'Evening, with meal',
+          details: {
+            Dose: '1000 mg × 1 (KSM-66 600 mg + root powder 400 mg)',
+            Note: 'No-Add only. Stasis has Shoden® 120 mg on Add days — stacking KSM-66 1000 mg would excessively suppress arousal. Evening: cortisol reduction + sleep improvement.'
+          }
+        },
+        Kanna: {
+          name: 'Kanna',
+          color: '#7F77DD',
+          timing: 'Sublingual — hold 60–90 sec',
+          details: {
+            Dose: '50 mg × 1',
+            Ingredient: 'Sceletium tortuosum Extract 50 mg',
+            Note: 'No-Add only: Adderall releases 5-HT; stacking = serotonergic risk. Sublingual for fast onset. PDE4 inhibitor, mood lift, social ease. ≤2–3×/week.'
+          }
+        },
+        Qiju_Dihuang: {
+          name: 'Qiju Dihuang Wan',
+          color: '#7F77DD',
+          timing: 'Morning & evening (×1 each)',
+          details: {
+            Dose: '× 2 — once morning, once evening',
+            Note: 'TCM liver-kidney yin tonic. Taken morning and evening (×1 each). Supports sleep quality and eye health. Active in Relax mode and Poor Sleep modifier. Mutually exclusive with Red Ginseng — when Qiju is in the stack, Red Ginseng is dropped to avoid stimulating against the recovery/sleep goal.'
+          }
+        },
+        Tongkat_Complex: {
+          name: 'Tongkat Complex',
+          color: '#D85A30',
+          timing: 'With meal',
+          details: {
+            Dose: '× 1 cap',
+            'Key ingredients': 'Eurycomanone 7 mg · Mucuna 200 mg (15% L-DOPA ≈30 mg) · Epimedium 200 mg (Icariin) · Pregnenolone 2.5 mg · Boron 1.5 mg · Iodine 100 mcg',
+            Note: 'Replaces standalone Mucuna on Performance/Social. L-DOPA 30 mg here is safe; covers DA without double-stacking.'
+          }
+        },
+        Maca_2x: {
+          name: 'Maca',
+          color: '#D85A30',
+          timing: 'With meal',
+          details: {
+            Dose: '200 mg × 2 = 400 mg',
+            Ingredient: 'Maca Extract 200 mg per cap',
+            Evidence: 'Human trials use up to 3 g/day — 400 mg very conservative and safe.',
+            Note: 'Social mode dose.'
+          }
+        },
+        Maca_3x: {
+          name: 'Maca',
+          color: '#D85A30',
+          timing: 'With meal',
+          details: {
+            Dose: '200 mg × 3 = 600 mg',
+            Ingredient: 'Maca Extract 200 mg per cap',
+            Evidence: 'Human trials use up to 3 g/day — 600 mg well within range.',
+            Note: 'Performance mode dose (takes priority when both Social + Performance selected).'
+          }
+        },
+        Black_Ginger_1x: {
+          name: 'Black Ginger',
+          color: '#D85A30',
+          timing: 'With fatty meal',
+          details: {
+            Dose: '200 mg × 1',
+            Ingredient: 'Kaempferia parviflora Extract 200 mg (10% 5,7-DMF = 20 mg active)',
+            Note: 'Workout dose: AMPK activation + blood flow. Fat-soluble.'
+          }
+        },
+        Black_Ginger_2x: {
+          name: 'Black Ginger',
+          color: '#D85A30',
+          timing: 'With fatty meal',
+          details: {
+            Dose: '200 mg × 2 = 400 mg (40 mg active)',
+            Ingredient: 'Kaempferia parviflora Extract 200 mg per cap',
+            Note: 'Performance dose: optimal PDE5 inhibition range. Fat-soluble. When Workout + Performance both selected, Performance dose (×2) takes priority.'
+          }
+        },
+        Am_Ginseng: {
+          name: 'American Ginseng (American Ginseng)',
+          color: '#D85A30',
+          timing: 'Morning',
+          details: {
+            Dose: '× 1 serving',
+            Note: 'Calming adaptogen balancing Red Ginseng stimulation in Performance and Social contexts. Promotes alert-calm state.'
+          }
+        },
+      }; // ── Logic ──────────────────────────────────────────────────────────────────
+      function getStack(add, mode, acts, feels, prostateOn) {
+        //extras = extras || new Set();
+        const groups = []; // ── GROUP 1: Daily base — always (long-term) ─────────────────────────
+        const base = {
+          label: 'Daily base',
+          items: []
+        };
+        base.items.push({
+          key: 'GNC_Vitapak',
+          serving: '× 1'
+        });
+        base.items.push({
+          key: 'B_Complex',
+          serving: '× 2'
+        });
+        base.items.push({
+          key: 'Creatine',
+          serving: '2.5 g × 1'
+        });
+        base.items.push({
+          key: 'Lions_Mane',
+          serving: '500 mg × 2'
+        });
+        base.items.push({
+          key: 'Bacopa',
+          serving: '× 1'
+        });
+        if (add === 'yes') {
+          base.items.push({
+            key: 'Stasis',
+            serving: '× 1'
+          });
+          base.items.push({
+            key: 'Milk_Thistle',
+            serving: '× 1'
+          });
+        } else {
+          base.items.push({
+            key: 'Milk_Thistle',
+            serving: '× 1'
+          });
+          base.items.push({
+            key: 'Vitamin_D3',
+            serving: '× 1 (5000 IU)'
+          });
+        }
+        groups.push(base); // ── GROUP 2: Cognitive — Sharp / Focus / Fatigue ───────────────────────
+        const cog = {
+          label: 'Cognitive',
+          items: []
+        };
+        if (mode === 'sharp') {
+          cog.items.push({
+            key: add === 'yes' ? 'Citicoline_1x' : 'Citicoline_2x',
+            serving: add === 'yes' ? '250 mg × 1' : '250 mg × 2'
+          });
+          cog.items.push({
+            key: 'Alpha_GPC',
+            serving: '150 mg × 2'
+          });
+          cog.items.push({
+            key: 'Sabroxy',
+            serving: '× 1'
+          });
+          cog.items.push({
+            key: 'Fourdma',
+            serving: '× 1'
+          });
+          if (add === 'no') {
+            cog.items.push({
+              key: 'Rhodiola_SA',
+              serving: '500 mg × 1'
+            });
+          }
+        } else if (mode === 'focus') {
+          cog.items.push({
+            key: 'Citicoline_2x',
+            serving: '250 mg × 2'
+          });
+          cog.items.push({
+            key: 'Alpha_GPC',
+            serving: '150 mg × 2'
+          });
+          cog.items.push({
+            key: 'Sabroxy',
+            serving: '× 1'
+          });
+        }
+        if (feels.has('fatigue') && mode !== 'sharp' && mode !== 'focus') {
+          if (add === 'no') {
+            cog.items.push({
+              key: 'Rhodiola_SA',
+              serving: '500 mg × 1'
+            });
+          }
+        }
+        if (cog.items.length) groups.push(cog); // ── GROUP 3: Dopamine support ─────────────────────────────────────────
+        const da = {
+          label: 'Dopamine support',
+          items: []
+        };
+        if (add === 'no') {
+          da.items.push({
+            key: 'DLPA_2x',
+            serving: '500 mg × 2 — fasted'
+          });
+          if (!acts.has('performance')) {
+            da.items.push({
+              key: 'Mucuna',
+              serving: '1000 mg × 1 — fasted'
+            });
+          }
+        } else {
+          if (mode === 'focus') {
+            da.items.push({
+              key: 'DLPA_1x',
+              serving: '500 mg × 1 — fasted'
+            });
+          }
+        }
+        if (da.items.length) groups.push(da); // ── GROUP 4: Energy & blood flow ─────────────────────────────────────
+        const en = {
+          label: 'Energy & blood flow',
+          items: []
+        };
+        const wantBeet = mode === 'sharp' || acts.has('workout') || feels.has('physical_tired');
+        const wantEnergy = mode === 'sharp' || acts.has('workout') || acts.has('performance') || feels.has('fatigue') || feels.has('physical_tired');
+        const wantGins = mode === 'sharp' || acts.has('workout') || acts.has('performance') || acts.has('social') || feels.has('fatigue') || feels.has('physical_tired') || feels.has('poor_sleep');
+        if (wantBeet) en.items.push({
+          key: 'Beetroot',
+          serving: '× 1'
+        });
+        if (wantEnergy) {
+          if (mode === 'sharp') {
+            en.items.push({
+              key: 'Energy_Support_2x',
+              serving: '× 2'
+            });
+          } else {
+            en.items.push({
+              key: 'Energy_Support_1x',
+              serving: '× 1'
+            });
+          }
+        }
+        if (wantGins) en.items.push({
+          key: 'Red_Ginseng',
+          serving: '3000 mg × 1'
+        });
+        if (en.items.length) groups.push(en); // ── GROUP 5: Performance / Social / Workout ───────────────────────────
+        const perf = {
+          label: 'Activity stack',
+          items: []
+        };
+        const hasPerf = acts.has('performance');
+        const hasSoc = acts.has('social');
+        const hasWork = acts.has('workout');
+        if (hasPerf || hasSoc) {
+          perf.items.push({
+            key: 'Tongkat_Complex',
+            serving: '× 1'
+          });
+        }
+        if (hasPerf) {
+          perf.items.push({
+            key: 'Maca_3x',
+            serving: '200 mg × 3'
+          });
+        } else if (hasSoc) {
+          perf.items.push({
+            key: 'Maca_2x',
+            serving: '200 mg × 2'
+          });
+        }
+        if (hasPerf) {
+          perf.items.push({
+            key: 'Black_Ginger_2x',
+            serving: '200 mg × 2'
+          });
+        } else if (hasWork) {
+          perf.items.push({
+            key: 'Black_Ginger_1x',
+            serving: '200 mg × 1'
+          });
+        }
+        if (hasPerf || hasSoc) {
+          perf.items.push({
+            key: 'Am_Ginseng',
+            serving: '× 1'
+          });
+        }
+        if (hasSoc && add === 'no') {
+          perf.items.push({
+            key: 'Kanna',
+            serving: '50 mg × 1 — sublingual'
+          });
+        }
+        if (perf.items.length) groups.push(perf); // ── GROUP 6: Mood & recovery ──────────────────────────────────────────
+        const mood = {
+          label: 'Mood & recovery',
+          items: []
+        };
+        if (mode === 'relax' && add === 'no') {
+          mood.items.push({
+            key: 'Ashwagandha',
+            serving: '1000 mg × 1 — evening'
+          });
+          mood.items.push({
+            key: 'Kanna',
+            serving: '50 mg × 1 — sublingual'
+          });
+          mood.items.push({
+            key: 'Saffron',
+            serving: '30 mg × 1'
+          });
+          mood.items.push({
+            key: 'Qiju_Dihuang',
+            serving: '× 2 — AM & PM'
+          });
+        }
+        if (feels.has('down') && add === 'no') {
+          mood.items.push({
+            key: 'Saffron',
+            serving: '30 mg × 1'
+          });
+          mood.items.push({
+            key: 'Kanna',
+            serving: '50 mg × 1 — sublingual'
+          });
+        }
+        if (feels.has('anxiety') && add === 'no') {
+          mood.items.push({
+            key: 'Ashwagandha',
+            serving: '1000 mg × 1 — evening'
+          });
+          mood.items.push({
+            key: 'Kanna',
+            serving: '50 mg × 1 — sublingual'
+          });
+          mood.items.push({
+            key: 'Saffron',
+            serving: '30 mg × 1'
+          });
+        }
+        if (feels.has('poor_sleep')) {
+          mood.items.push({
+            key: 'Qiju_Dihuang',
+            serving: '× 2 — AM & PM'
+          });
+          if (add === 'no') {
+            mood.items.push({
+              key: 'Ashwagandha',
+              serving: '1000 mg × 1 — evening'
+            });
+          }
+          mood.items.push({
+            key: 'Red_Ginseng',
+            serving: '3000 mg × 1'
+          });
+        }
+        if (mood.items.length) groups.push(mood);
+
+        // ── GROUP 7: Hormonal / prostate — auto by mode + alt-day ─────────────
+      const hormone = { label:'Hormonal & prostate', items:[] };
+      // Testosterone Support: Performance / Social / Workout (dedup handles repeats)
+      if (hasPerf || hasSoc || acts.has('workout')) {
+        hormone.items.push({ key:'Testosterone_Support', serving:'× 1' });
+      }
+     // Prostate Support: Performance forces it; otherwise alt-day ON
+     if (hasPerf || prostateOn) {
+        hormone.items.push({ key:'Prostate_Support', serving:'× 1' });
+     }
+     if (hormone.items.length) groups.push(hormone);
+
+        // ── Qiju ↔ Red Ginseng mutual exclusion (Qiju wins) ─────────────────
+        if (groups.some(g => g.items.some(i => i.key === 'Qiju_Dihuang'))) {
+          groups.forEach(g => {
+            g.items = g.items.filter(i => i.key !== 'Red_Ginseng');
+          });
+        } // ── Global deduplication (keep first occurrence per key) ─────────────
+        const seen = new Set();
+        return groups.map(g => ({
+          ...g,
+          items: g.items.filter(item => {
+            if (seen.has(item.key)) return false;
+            seen.add(item.key);
+            return true;
+          })
+        })).filter(g => g.items.length > 0);
+      } // ── Orphan detection ───────────────────────────────────────────────────────
+      const AS_NEEDED_KEYS = ['Prostate_Support', 'Testosterone_Support']; // manually toggled in the As-needed section, not driven by mode
+      const ALL_STACKABLE_KEYS = new Set(['GNC_Vitapak', 'B_Complex', 'Creatine', 'Prostate_Support', 'Testosterone_Support', 'Milk_Thistle', 'Vitamin_D3', 'Stasis', 'Citicoline_1x', 'Citicoline_2x', 'Alpha_GPC', 'Lions_Mane', 'Bacopa', 'Sabroxy', 'Fourdma', 'Rhodiola_SA', 'Energy_Support_1x', 'Energy_Support_2x', 'Red_Ginseng', 'Beetroot', 'DLPA_2x', 'DLPA_1x', 'Mucuna', 'Saffron', 'Ashwagandha', 'Kanna', 'Qiju_Dihuang', 'Tongkat_Complex', 'Maca_2x', 'Maca_3x', 'Black_Ginger_1x', 'Black_Ginger_2x', 'Am_Ginseng']);
+
+      function findOrphans(usedKeys) {
+        return [...ALL_STACKABLE_KEYS].filter(k => !usedKeys.has(k));
+      } // ── Generate (handles logging) ──────────────────────────────────────────────
+      async function doGenerate(){
   const explorer = document.getElementById('explorer-cb').checked;
-  const prostateSel = S.extras.has('prostate');
   const log = await loadLog();
-  if (prostateSel && !explorer) {
+  const ps = await prostateStatus();              // alt-day ON/OFF from Supabase
+  const hasPerf = S.acts.has('performance');
+  const prostateInStack = hasPerf || ps.on;       // Performance forces; else alt-day
+  if (prostateInStack && !explorer) {
     if (log.lastProstateDate === todayStr()) {
       logMsg = 'Prostate already logged as taken today.';
     } else {
       log.lastProstateDate = todayStr();
-      logMsg = 'Prostate logged as taken today.';
+      logMsg = hasPerf ? 'Prostate logged (Performance — forced).' : 'Prostate logged (alt-day ON).';
     }
-  } else if (prostateSel && explorer) {
+  } else if (prostateInStack && explorer) {
     logMsg = 'Explorer mode — Prostate not logged today.';
   } else {
-    logMsg = 'Prostate not selected — nothing to log.';
+    logMsg = 'Alt-day OFF — Prostate skipped today, returns tomorrow.';
   }
   if (!explorer) {
-    if (!log.days) log.days = {};
-    const groups = getStack(S.add, S.mode, S.acts, S.feels, S.extras);
-    const stackSnap = groups.map(g => ({ group: g.label, items: g.items.map(i => DB[i.key]?.name || i.key) }));
-    log.days[todayStr()] = {
-      savedAt: new Date().toISOString(),
-      adderall: S.add === 'yes' ? S.dose + 'mg' : 'none',
-      mode: S.mode,
-      activities: [...S.acts],
-      feelings: [...S.feels],
-      extras: [...S.extras],
-      yesterdayScore: S.score ? parseInt(S.score) : null,
-      stack: stackSnap
-    };
-    await saveLog(log);
+  const groups = getStack(S.add, S.mode, S.acts, S.feels, prostateInStack);
+  const suppNames = groups.flatMap(g => g.items.map(i => DB[i.key]?.name || i.key));
+  const dailyRow = {
+    date: todayStr(),
+    mode: cap(S.mode),
+    adderall: S.add === 'yes' ? S.dose + 'mg' : 'none',
+    activities: [...S.acts].map(cap).join(', '),
+    feelings: [...S.feels].map(cap).join(', '),
+    supplements: suppNames.join(', '),
+    saved_at: new Date().toISOString()   // feeling_score 留空,明天回填
+  };
+  await saveLog(log);                    // 仍写 meta(lastProstateDate)
+  try {
+    await sbUpsertDaily(dailyRow);
+    if (S.score) {                       // 把 Yesterday feeling 写进昨天那行
+      const updated = await sbPatchDaily(yesterdayStr(), { feeling_score: parseInt(S.score) });
+      logMsg += (Array.isArray(updated) && updated.length === 0)
+        ? ' · Yesterday had no row — score not back-filled.'
+        : ' · Yesterday feeling score (' + S.score + ') saved to ' + yesterdayStr() + '.';
+    }
+    setSyncStatus('☁️ Saved', 'var(--accent)');
+    _saveError = null;
+  } catch (e) {
+    _saveError = 'stack_daily save failed: ' + e.message;
+    setSyncStatus('⚠️ ' + _saveError, 'var(--danger)');
   }
-  render();}// Manual overrides (do NOT auto-log; they set the record directly)
-async function resetProstateLog(){ const l=await loadLog(); delete l.lastProstateDate; await saveLog(l); logMsg='Alternate-day log reset.'; render(); }async function markProstateToday(){ const l=await loadLog(); l.lastProstateDate=todayStr(); await saveLog(l); logMsg='Manually marked as taken today.'; render(); }async function markProstateYesterday(){ const l=await loadLog(); l.lastProstateDate=yesterdayStr(); await saveLog(l); logMsg='Marked as taken yesterday → skipped today.'; render(); }// ── Render (pure display — never logs) ───────────────────────────────────────
-async function render() {  const explorer = document.getElementById('explorer-cb').checked;  const ps = await prostateStatus();  const prostateSel = S.extras.has('prostate');  const testoSel = S.extras.has('testosterone');  const groups = getStack(S.add, S.mode, S.acts, S.feels, S.extras);  const usedKeys = new Set(groups.flatMap(g => g.items.map(i => i.key)));  const orphans  = findOrphans(usedKeys);  const out = document.getElementById('output');  const addLabel = S.add==='yes' ? `Adderall ${S.dose} mg` : 'No Adderall';  const actLabel = [...S.acts].map(cap).join(' + ');  const feelLabel= [...S.feels].map(cap).join(' + ');  const dayDesc  = [cap(S.mode), actLabel, feelLabel].filter(Boolean).join(' · ');  let html = '<hr>';  html += `<div class="day-badge ${S.add==='yes'?'hadd':'noadd'}"><div class="dot"></div>${addLabel} · ${dayDesc}${explorer?' · <span style="color:var(--warn)">explorer</span>':''}</div>`;  // ── Alternate-day (Prostate Support) banner ──  
-if (prostateSel) {    const recent = ps.last && ps.last !== todayStr() && daysBetween(ps.last, todayStr()) <= 1;    const actions = `<button onclick="markProstateYesterday()">Log as taken yesterday</button><button onclick="resetProstateLog()">Reset log</button>`;    html += `<div class="orphan-banner" style="border-color:rgba(91,156,246,.25);background:var(--info-dim);color:var(--info)">      <strong>Prostate Support — selected (as needed).</strong> ${ps.last ? 'Last logged '+ps.last+'. ' : 'No prior record. '}${recent ? '⚠️ Logged within the last day — consider spacing it out for zinc. ' : ''}${logMsg}      <div class="log-actions">${actions}</div>    </div>`;  }  // ── Zinc total banner (dynamic on selected extras) ──  
-{    const zn = 18.5 + (prostateSel?15:0) + (testoSel?15:0);    const parts = ['GNC 18.5'];    if (testoSel) parts.push('TestoSupport 15');    if (prostateSel) parts.push('Prostate 15');    const over = zn > 40;    html += `<div class="orphan-banner" style="border-color:${over?'rgba(246,168,91,.25)':'var(--border)'};${over?'':'background:var(--surface2);color:var(--muted);'}">      <strong>Zinc today ≈ ${zn} mg.</strong> ${parts.join(' + ')}${over?' — briefly over the 40 mg UL; keep Prostate/Testo as-needed (not daily) so the weekly average stays in range.':' — within range.'} Standalone Zinc cap is never taken.    </div>`;  }  // ── Non-intentional orphans (exclude variant pairs + as-needed keys) ──  
-const ignore = ['Citicoline_1x','Citicoline_2x','DLPA_1x','DLPA_2x','Maca_2x','Maca_3x','Black_Ginger_1x','Black_Ginger_2x','Energy_Support_1x','Energy_Support_2x','Vitamin_D3','Stasis', ...AS_NEEDED_KEYS];  const unexpectedOrphans = orphans.filter(k => !ignore.includes(k));  const variantPairs = [    ['Citicoline_1x','Citicoline_2x'],    ['DLPA_1x','DLPA_2x'],    ['Maca_2x','Maca_3x'],    ['Black_Ginger_1x','Black_Ginger_2x'],    ['Energy_Support_1x','Energy_Support_2x'],    ['Vitamin_D3','Stasis'],  ];  const flagged = new Set();  unexpectedOrphans.forEach(k => {    const pair = variantPairs.find(p => p.includes(k));    if (pair) {      if (!usedKeys.has(pair[0]) && !usedKeys.has(pair[1])) flagged.add(pair.join(' / '));    } else {      flagged.add(k);    }  });  if (flagged.size > 0) {    const names = [...flagged].map(k => {      if (k.includes(' / ')) return k.split(' / ').map(x => DB[x]?.name || x).join(' or ');      return DB[k]?.name || k;    });    html += `<div class="orphan-banner" style="border-color:rgba(246,91,91,.25);background:var(--danger-dim);color:var(--danger)">      <strong>Heads up — these supplements aren't in today's stack:</strong><br>${names.join(', ')}.<br>      Want to add any of these? Select a relevant mode or modifier above.    </div>`;  }  html += '<div class="stack-list">';  let total = 0;  groups.forEach(g => {    html += `<div class="ghead">${g.label}</div>`;    g.items.forEach(item => {      const d = DB[item.key];      if (!d) return;      total++;      html += `<div class="sitem" onclick="openModal('${item.key}')">        <div class="il">          <div class="ibar" style="background:${d.color}"></div>          <div>            <div class="iname">${d.name}</div>            <div class="itiming">${d.timing}</div>          </div>        </div>        <div class="ir">          <span class="iserving">${item.serving}</span>          <span class="chev">›</span>        </div>      </div>`;    });  });  html += '</div>';  html += `<div class="sfooter">${total} items · tap any for details</div>`;
-  if (_saveError) html += `<div class="sfooter" style="color:var(--danger);margin-top:4px">⚠️ ${_saveError}</div>`;  out.innerHTML = html;  out.scrollIntoView({ behavior:'smooth', block:'nearest' });}function cap(s) {  const map = { sharp:'Sharp', focus:'Focus', relax:'Relax', workout:'Workout', performance:'Performance', social:'Social',    fatigue:'Brain fatigue', physical_tired:'Physical tired', down:'Low mood', anxiety:'Anxiety', poor_sleep:'Poor sleep' };  return map[s] || (s.charAt(0).toUpperCase() + s.slice(1));}function openModal(key) {  const d = DB[key]; if (!d) return;  const rows = Object.entries(d.details).map(([k,v]) =>    `<tr><td>${k}</td><td>${v}</td></tr>`).join('');  document.getElementById('modal').innerHTML = `    <div class="mov" id="mov" onclick="if(event.target===this)closeModal()">      <div class="mbox">        <div class="mhandle"></div>        <div class="mname">${d.name}</div>        <div class="mtiming">${d.timing}</div>        <table class="mtable"><tbody>${rows}</tbody></table>        <button class="closebtn" onclick="closeModal()">Dismiss</button>      </div>    </div>`;}function closeModal() { document.getElementById('modal').innerHTML=''; }// ── Event wiring ─────────────────────────────────────────────────────────────
- 
-// Helper: single-select within a container
-function bindSingle(containerId, stateKey, onSelect) {
-  var container = document.getElementById(containerId);
-  if (!container) return;
-  container.querySelectorAll('.chip').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      container.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('on'); });
-      btn.classList.add('on');
-      S[stateKey] = btn.dataset.v;
-      if (onSelect) onSelect(btn.dataset.v);
-    });
-  });
 }
- 
-// Helper: multi-select within a container
-function bindMulti(containerId, stateSet) {
-  var container = document.getElementById(containerId);
-  if (!container) return;
-  container.querySelectorAll('.chip').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var v = btn.dataset.v;
-      if (stateSet.has(v)) {
-        stateSet.delete(v);
-        btn.classList.remove('on');
-      } else {
-        stateSet.add(v);
-        btn.classList.add('on');
+render();
+      } // Manual overrides (do NOT auto-log; they set the record directly)
+      async function resetProstateLog() {
+        const l = await loadLog();
+        delete l.lastProstateDate;
+        await saveLog(l);
+        logMsg = 'Alternate-day log reset.';
+        render();
       }
-    });
-  });
-}
- 
-bindSingle('add-row', 'add', function(v) {
-  var ds = document.getElementById('dose-sec');
-  ds.style.opacity = v === 'yes' ? '1' : '0.28';
-  ds.style.pointerEvents = v === 'yes' ? '' : 'none';
-});
-bindSingle('dose-row', 'dose', null);
-bindSingle('mode-row', 'mode', null);
-bindMulti('act-row', S.acts);
-bindMulti('feel-row', S.feels);
-bindMulti('extra-row', S.extras);
-bindSingle('score-row', 'score', null);
- 
-document.getElementById('explorer-cb').addEventListener('change', function(e) {
-  document.getElementById('explorer-row').classList.toggle('active', e.target.checked);
-});
-document.getElementById('gen-btn').addEventListener('click', function() { doGenerate(); });
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
-loadLog();
-</script></body></html>
- 
+      async function markProstateToday() {
+        const l = await loadLog();
+        l.lastProstateDate = todayStr();
+        await saveLog(l);
+        logMsg = 'Manually marked as taken today.';
+        render();
+      }
+      async function markProstateYesterday() {
+        const l = await loadLog();
+        l.lastProstateDate = yesterdayStr();
+        await saveLog(l);
+        logMsg = 'Marked as taken yesterday → skipped today.';
+        render();
+      } // ── Render (pure display — never logs) ───────────────────────────────────────
+        async function render() {
+          const explorer = document.getElementById('explorer-cb').checked;
+
+          const ps = await prostateStatus();  const hasPerf = S.acts.has('performance');
+          const prostateOn = hasPerf || ps.on;  const prostateSel = prostateOn;
+          const testoSel = S.acts.has('performance') || S.acts.has('social') || S.acts.has('workout');
+          const groups = getStack(S.add, S.mode, S.acts, S.feels, prostateOn);
+        const usedKeys = new Set(groups.flatMap(g => g.items.map(i => i.key)));
+        const orphans = findOrphans(usedKeys);
+        const out = document.getElementById('output');
+        const addLabel = S.add === 'yes' ? `Adderall ${S.dose} mg` : 'No Adderall';
+        const actLabel = [...S.acts].map(cap).join(' + ');
+        const feelLabel = [...S.feels].map(cap).join(' + ');
+        const dayDesc = [cap(S.mode), actLabel, feelLabel].filter(Boolean).join(' · ');
+        let html = '<hr>';
+        html += `<div class="day-badge ${S.add==='yes'?'hadd':'noadd'}"><div class="dot"></div>${addLabel} · ${dayDesc}${explorer?' · <span style="color:var(--warn)">explorer</span>':''}</div>`; // ── Alternate-day (Prostate Support) banner ──
+        if (prostateSel) {
+          const recent = ps.last && ps.last !== todayStr() && daysBetween(ps.last, todayStr()) <= 1;
+          const actions = `<button onclick="markProstateYesterday()">Log as taken yesterday</button><button onclick="resetProstateLog()">Reset log</button>`;
+          html += `<div class="orphan-banner" style="border-color:rgba(91,156,246,.25);background:var(--info-dim);color:var(--info)">      <strong>Prostate Support — selected (as needed).</strong> ${ps.last ? 'Last logged '+ps.last+'. ' : 'No prior record. '}${recent ? '⚠️ Logged within the last day — consider spacing it out for zinc. ' : ''}${logMsg}      <div class="log-actions">${actions}</div>    </div>`;
+        } // ── Zinc total banner (dynamic on selected extras) ──
+        {
+          const zn = 18.5 + (prostateSel ? 15 : 0) + (testoSel ? 15 : 0);
+          const parts = ['GNC 18.5'];
+          if (testoSel) parts.push('TestoSupport 15');
+          if (prostateSel) parts.push('Prostate 15');
+          const over = zn > 40;
+          html += `<div class="orphan-banner" style="border-color:${over?'rgba(246,168,91,.25)':'var(--border)'};${over?'':'background:var(--surface2);color:var(--muted);'}">      <strong>Zinc today ≈ ${zn} mg.</strong> ${parts.join(' + ')}${over?' — briefly over the 40 mg UL; keep Prostate/Testo as-needed (not daily) so the weekly average stays in range.':' — within range.'} Standalone Zinc cap is never taken.    </div>`;
+        } // ── Non-intentional orphans (exclude variant pairs + as-needed keys) ──
+        const ignore = ['Citicoline_1x', 'Citicoline_2x', 'DLPA_1x', 'DLPA_2x', 'Maca_2x', 'Maca_3x', 'Black_Ginger_1x', 'Black_Ginger_2x', 'Energy_Support_1x', 'Energy_Support_2x', 'Vitamin_D3', 'Stasis', ...AS_NEEDED_KEYS];
+        const unexpectedOrphans = orphans.filter(k => !ignore.includes(k));
+        const variantPairs = [
+          ['Citicoline_1x', 'Citicoline_2x'],
+          ['DLPA_1x', 'DLPA_2x'],
+          ['Maca_2x', 'Maca_3x'],
+          ['Black_Ginger_1x', 'Black_Ginger_2x'],
+          ['Energy_Support_1x', 'Energy_Support_2x'],
+          ['Vitamin_D3', 'Stasis'],
+        ];
+        const flagged = new Set();
+        unexpectedOrphans.forEach(k => {
+          const pair = variantPairs.find(p => p.includes(k));
+          if (pair) {
+            if (!usedKeys.has(pair[0]) && !usedKeys.has(pair[1])) flagged.add(pair.join(' / '));
+          } else {
+            flagged.add(k);
+          }
+        });
+        if (flagged.size > 0) {
+          const names = [...flagged].map(k => {
+            if (k.includes(' / ')) return k.split(' / ').map(x => DB[x]?.name || x).join(' or ');
+            return DB[k]?.name || k;
+          });
+          html += `<div class="orphan-banner" style="border-color:rgba(246,91,91,.25);background:var(--danger-dim);color:var(--danger)">      <strong>Heads up — these supplements aren't in today's stack:</strong><br>${names.join(', ')}.<br>      Want to add any of these? Select a relevant mode or modifier above.    </div>`;
+        }
+        html += '<div class="stack-list">';
+        let total = 0;
+        groups.forEach(g => {
+          html += `<div class="ghead">${g.label}</div>`;
+          g.items.forEach(item => {
+            const d = DB[item.key];
+            if (!d) return;
+            total++;
+            html += `<div class="sitem" onclick="openModal('${item.key}')">        <div class="il">          <div class="ibar" style="background:${d.color}"></div>          <div>            <div class="iname">${d.name}</div>            <div class="itiming">${d.timing}</div>          </div>        </div>        <div class="ir">          <span class="iserving">${item.serving}</span>          <span class="chev">›</span>        </div>      </div>`;
+          });
+        });
+        html += '</div>';
+        html += `<div class="sfooter">${total} items · tap any for details</div>`;
+        if (_saveError) html += `<div class="sfooter" style="color:var(--danger);margin-top:4px">⚠️ ${_saveError}</div>`;
+        out.innerHTML = html;
+        out.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+
+      function cap(s) {
+        const map = {
+          sharp: 'Sharp',
+          focus: 'Focus',
+          relax: 'Relax',
+          workout: 'Workout',
+          performance: 'Performance',
+          social: 'Social',
+          fatigue: 'Brain fatigue',
+          physical_tired: 'Physical tired',
+          down: 'Low mood',
+          anxiety: 'Anxiety',
+          poor_sleep: 'Poor sleep'
+        };
+        return map[s] || (s.charAt(0).toUpperCase() + s.slice(1));
+      }
+
+      function openModal(key) {
+        const d = DB[key];
+        if (!d) return;
+        const rows = Object.entries(d.details).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+        document.getElementById('modal').innerHTML = `    <div class="mov" id="mov" onclick="if(event.target===this)closeModal()">      <div class="mbox">        <div class="mhandle"></div>        <div class="mname">${d.name}</div>        <div class="mtiming">${d.timing}</div>        <table class="mtable"><tbody>${rows}</tbody></table>        <button class="closebtn" onclick="closeModal()">Dismiss</button>      </div>    </div>`;
+      }
+
+      function closeModal() {
+        document.getElementById('modal').innerHTML = '';
+      } // ── Event wiring ─────────────────────────────────────────────────────────────
+
+      // Helper: single-select within a container
+      function bindSingle(containerId, stateKey, onSelect) {
+        var container = document.getElementById(containerId);
+        if (!container) return;
+        container.querySelectorAll('.chip').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            container.querySelectorAll('.chip').forEach(function(x) {
+              x.classList.remove('on');
+            });
+            btn.classList.add('on');
+            S[stateKey] = btn.dataset.v;
+            if (onSelect) onSelect(btn.dataset.v);
+          });
+        });
+      }
+
+      // Helper: multi-select within a container
+      function bindMulti(containerId, stateSet) {
+        var container = document.getElementById(containerId);
+        if (!container) return;
+        container.querySelectorAll('.chip').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var v = btn.dataset.v;
+            if (stateSet.has(v)) {
+              stateSet.delete(v);
+              btn.classList.remove('on');
+            } else {
+              stateSet.add(v);
+              btn.classList.add('on');
+            }
+          });
+        });
+      }
+
+      bindSingle('add-row', 'add', function(v) {
+        var ds = document.getElementById('dose-sec');
+        ds.style.opacity = v === 'yes' ? '1' : '0.28';
+        ds.style.pointerEvents = v === 'yes' ? '' : 'none';
+      });
+      bindSingle('dose-row', 'dose', null);
+      bindSingle('mode-row', 'mode', null);
+      bindMulti('act-row', S.acts);
+      bindMulti('feel-row', S.feels);
+
+      bindSingle('score-row', 'score', null);
+
+      document.getElementById('explorer-cb').addEventListener('change', function(e) {
+        document.getElementById('explorer-row').classList.toggle('active', e.target.checked);
+      });
+      document.getElementById('gen-btn').addEventListener('click', function() {
+        doGenerate();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal();
+      });
+      loadLog();
+    </script></body>
+</html>
